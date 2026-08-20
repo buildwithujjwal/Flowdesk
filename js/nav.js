@@ -3,10 +3,14 @@ fetch('../partials/nav.html')
     .then(html => {
         document.getElementById("nav-placeholder").innerHTML = html;
 
-        const logoutBtn = document.getElementById("logout-btn");
+        let logoutBtn = document.getElementById("logout-btn");
+
         logoutBtn.addEventListener("click", (event) => {
-        event.preventDefault();
-        window.location.href = "index.html";
-            });
+          event.preventDefault();
+          sessionStorage.removeItem("currentUser");
+          window.location.href = "index.html";
+        });
     });
+
+
 
