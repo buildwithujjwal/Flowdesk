@@ -1,0 +1,137 @@
+.tasks-layout {
+    --tasks-bg: #ffffff;
+    --tasks-sidebar-bg: #faf9f7;
+    --tasks-text: #444444;
+    --tasks-border: #e5e5e5;
+    --tasks-input-bg: #ffffff;
+    --tasks-hover: #f0efed;
+    --tasks-button: #333333;
+    --tasks-button-text: #ffffff;
+
+    display: flex;
+    width: 100%;
+    min-height: calc(100vh - 60px);
+    background: var(--tasks-bg);
+}
+
+.tasks-menu {
+    width: 300px;
+    min-width: 300px;
+    padding: 28px 20px;
+    border-right: 1px solid var(--tasks-border);
+    background: var(--tasks-sidebar-bg);
+    box-sizing: border-box;
+}
+
+.tasks-menu input {
+    width: 100%;
+    height: 42px;
+    padding: 0 14px;
+    margin: 0;
+    border: 1px solid var(--tasks-border);
+    border-radius: 7px;
+    background: var(--tasks-input-bg);
+    color: var(--tasks-text);
+    box-sizing: border-box;
+    font-size: 15px;
+}
+
+.tasks-filters {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 20px;
+    padding: 0;
+    background: transparent;
+}
+
+.tasks-filters button {
+    display: block;
+    width: 100%;
+    padding: 10px 14px;
+    margin: 0;
+    color: var(--tasks-text);
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 15px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.tasks-filters button:hover {
+    background: var(--tasks-hover);
+}
+
+.tasks-main {
+    flex: 1;
+    padding: 50px 70px;
+    margin: 0;
+    max-width: none;
+    box-sizing: border-box;
+    background: var(--tasks-bg);
+}
+
+#task-form {
+    width: 100%;
+    max-width: 950px;
+    margin: 0 auto;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--tasks-border);
+    border-radius: 12px;
+    background: var(--tasks-input-bg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+}
+
+#task-input {
+    width: 100%;
+    height: 58px;
+    padding: 0 16px;
+    margin: 0;
+    border: none;
+    border-bottom: 1px solid var(--tasks-border);
+    border-radius: 0;
+    background: var(--tasks-input-bg);
+    color: var(--tasks-text);
+    box-sizing: border-box;
+    font-size: 16px;
+    outline: none;
+}
+
+#dueDate {
+    width: 170px;
+    height: 42px;
+    margin: 14px 14px 10px;
+    padding: 0 12px;
+    border: 1px solid var(--tasks-border);
+    border-radius: 7px;
+    background: var(--tasks-input-bg);
+    color: var(--tasks-text);
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+#task-form button {
+    width: 110px;
+    height: 40px;
+    margin: 0 14px 14px;
+    padding: 0;
+    border: none;
+    border-radius: 7px;
+    background: var(--tasks-button);
+    color: var(--tasks-button-text);
+    font-size: 14px;
+    cursor: pointer;
+}
+
+#task-list {
+    width: 100%;
+    max-width: 950px;
+    margin: 25px auto;
+    padding: 0;
+}

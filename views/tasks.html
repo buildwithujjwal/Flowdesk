@@ -5,10 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flowdesk</title>
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/tasks.css">
     <script src="../js/auth-gaurd.js"></script>
     <script src="../js/nav.js"></script>
 </head>
 <body>
     <div id="nav-placeholder"></div>
+
+    <div class="tasks-layout">
+        <aside class="tasks-menu">
+            <input type="text" id="task-search" placeholder="Search tasks">
+
+            <nav class="tasks-filters">
+                <button data-filter="all">All</button>
+                <button data-filter="active">Active</button>
+                <button data-filter="completed">Completed</button>
+                <button data-filter="today">Today</button>
+                <button data-filter="upcoming">Upcoming</button>
+            </nav>
+        </aside>
+
+        <main class="tasks-main">
+            <form id="task-form">
+                <input type="text" id="task-input" placeholder="Add a new task" required>
+                <input type="date" id="dueDate">
+                <button type="submit">Add Task</button>
+            </form>
+
+            <ul id="task-list"></ul>
+        </main>
+    </div>
 </body>
 </html>
