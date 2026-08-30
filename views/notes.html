@@ -4,11 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flowdesk</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/nav.css">
+    <link rel="stylesheet" href="../css/notes.css">
     <script src="../js/auth-gaurd.js"></script>
     <script src="../js/nav.js"></script>
+    <script src="../js/notes.js" defer></script>
 </head>
 <body>
+
     <div id="nav-placeholder"></div>
+
+    <div class="notes-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Notes</h2>
+                <button id="new-note-btn">+</button>
+            </div>
+            <div class="category-section">
+                <p class="section-label">Categories</p>
+                <ul id="category-list"></ul>
+                <button id="new-category-btn">+ New Category</button>
+            </div>
+            <div class="notes-section">
+                <p class="section-label">All Notes</p>
+                <ul id="note-list"></ul>
+            </div>
+        </aside>
+ 
+        <main class="editor-area">
+            <div class="empty-state" id="empty-state">
+                <p>Select a note or create a new one</p>
+            </div>
+            <div class="note-editor" id="note-editor" style="display:none;">
+                <input type="text" id="note-title" placeholder="Note Title">
+                <select id="note-category">
+                    <option value="">No Category</option>
+                    <option value="__new__">+ Add New Category</option>
+                </select>
+                <div id="note-content" contenteditable="true" placeholder="Start writing..."></div>
+                <div class="editor-actions">
+                    <button id="save-note-btn">Save</button>
+                    <button id="delete-note-btn">Delete</button>
+                </div>
+            </div>
+        </main>
+ 
+        <section class="cards-area">
+            <div class="cards-header">
+                <h3 id="cards-title">All Notes</h3>
+                <input type="text" id="search-input" placeholder="Search...">
+            </div>
+            <div class="cards-grid" id="cards-grid"></div>
+        </section>
+    </div>
 </body>
 </html>

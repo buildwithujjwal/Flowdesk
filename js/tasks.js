@@ -219,4 +219,5 @@ document.getElementById("dueDate").addEventListener("change", () => {
 // Features left before Finalizing Tasks page
 // 1) edit button
 // 2) search tasks
-// 3) overall css
+// 3) remainder (it is to be done after timer page done)
+// 4) overall css
