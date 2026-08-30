@@ -97,10 +97,30 @@
     border-bottom: 1px solid var(--tasks-border);
     border-radius: 0;
     background: var(--tasks-input-bg);
-    color: var(--tasks-text);
+    color: var(--tasks-text);   
     box-sizing: border-box;
     font-size: 16px;
     outline: none;
+}
+
+#new-task-btn {
+    width: 100%;
+    padding: 10px 14px;
+    margin-top: 16px;
+    background: var(--tasks-button);
+    color: var(--tasks-button-text);
+    border: none;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+}
+
+#new-task-btn:hover {
+    opacity: 0.85;
 }
 
 #dueDate {
@@ -188,3 +208,10 @@
     background: var(--tasks-hover);
 }
 
+#error {
+    color: red;
+    font-size: 0.8rem;
+    min-height: 16px;
+    margin: 0 14px 10px;  /* matches the button's left margin so it aligns */
+    padding: 4px 8px;
+}
