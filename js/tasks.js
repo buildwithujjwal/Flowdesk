@@ -4,7 +4,8 @@
 let tasks = localStorage.getItem("tasks"); // fetched the tasks array from the local storage
 tasks = tasks ? JSON.parse(tasks) : []; // if it is null, provide an empty array.
 
-const username = currentUser.username; // currentUser already been fetched in auth-guard.js.
+const username = JSON.parse(currentUser).username; // currentUser already been fetched in auth-guard.js.
+// const username = currentUser.username;
 const today = new Date().toISOString().split("T")[0]; //converting the todays date into YYYY-MM-DD format
 
 let currentView = "latestFive"; //default rendering to latest 5 added tasks
@@ -30,7 +31,7 @@ addTask.addEventListener("submit", (event) => {
   let error = "";
   if (!text) error = "task cannot be empty";
   else if (!dueDate) error = "Select the Date";
-  else if (dueDate < today) error = "Select a valid Date";
+  // else if (dueDate < today) error = "Select a valid Date";
   else if (
     tasks.find(
       (task) => task.username === currentUser.username && task.text === text,
@@ -72,6 +73,7 @@ function renderTasks(str) {
   // making a User's specific task list "userTasks" because localStorage contains all user's tasks together.
   let userTasks = [];
   for (let i = 0; i < tasks.length; i++) {
+    
     if (tasks[i].username === username) userTasks.push(tasks[i]);
   }
 
