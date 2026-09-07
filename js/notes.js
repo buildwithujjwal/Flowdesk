@@ -7,7 +7,9 @@ const today = new Date().toISOString().split("T")[0];
 const noteEditor = document.getElementById("note-editor");
 const newNote = document.getElementById("new-note-btn");
 
-renderNotes("all");
+const currentView = "all";
+renderNotes(currentView);
+renderCategories();
 
 newNote.addEventListener("click", () => {
     document.getElementById("empty-state").style.display = "none";
@@ -16,6 +18,19 @@ newNote.addEventListener("click", () => {
     document.getElementById("note-title").value = "";
     document.getElementById("note-category").value = "";
     document.getElementById("note-content").innerHTML = "";
+});
+
+const noteCategorySelect = document.getElementById("note-category");
+const newCategoryInput = document.getElementById("new-category-input");
+
+noteCategorySelect.addEventListener("change", () => {
+    if (noteCategorySelect.value === "__new__") {
+        newCategoryInput.style.display = "block";
+        newCategoryInput.focus();
+    } else {
+        newCategoryInput.style.display = "none";
+        newCategoryInput.value = "";
+    }
 });
 
 const saveNoteBtn = document.getElementById("save-note-btn");
@@ -36,13 +51,18 @@ saveNoteBtn.addEventListener("click", () => {
         )
     ) error = "title already exists";
     else{
-        notes.push({id, username, title, content, category, createdAt, updatedAt});
+
+        if(noteCategorySelect.value === "__new__") {
+            category = newCategoryInput.value.trim();
+        }
         
+        notes.push({id, username, title, content, category, createdAt, updatedAt});
         localStorage.setItem("notes", JSON.stringify(notes));
 
         document.getElementById("note-title").value = "";
         document.getElementById("note-content").innerHTML = "";
         document.getElementById("note-category").value = "";
+        newCategoryInput.value = ""
 
         noteEditor.style.display = "none";
         document.getElementById("empty-state").style.display = "block";
@@ -107,3 +127,58 @@ cardsGrid.addEventListener("click", (event) => {
     document.getElementById("note-category").value = note.category;
     document.getElementById("note-content").innerHTML = note.content;
 });
+
+
+function renderCategories() {
+
+    const uniqueCategories = [
+        ...new Set(
+            notes
+                .filter(note => note.username === username)
+                .map(note => note.category)
+                .filter(category => category)
+        )
+    ];
+
+    const categoryList = document.getElementById("category-list");
+    categoryList.innerHTML = `
+        ${uniqueCategories
+            .map((cg) => {
+                return `<li data-category="${cg}">${cg}</li>`;
+            })
+            .join("")}
+    `;
+
+    const noteCategorySelect = document.getElementById("note-category");
+    const dynamicOptions = uniqueCategories
+        .map((cg) => {
+            return `<option value="${cg}">${cg}</option>`;
+        })
+        .join("");
+
+    noteCategorySelect.innerHTML = `
+        <option value="">No Category</option>
+        ${dynamicOptions}
+        <option value="__new__">+ Add New Category</option>
+    `;
+};
+
+const deleteNoteBtn = document.getElementById("delete-note-btn");
+deleteNoteBtn.addEventListener("click", () => {
+    if(!selectedNoteId) return;
+    deleteNote(selectedNoteId);
+});
+
+
+function deleteNote(id) {
+    notes = notes.filter((note) => note.id !== id);
+    localStorage.setItem("notes", JSON.stringify(notes));
+
+    document.getElementById("empty-state").style.display = "block";
+    selectedNoteId = null;  
+
+    noteEditor.style.display = "none";
+
+    renderNotes(currentView);
+    renderCategories();
+}

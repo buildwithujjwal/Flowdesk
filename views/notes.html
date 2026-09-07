@@ -36,11 +36,14 @@
                 <p>Select a note or create a new one</p>
             </div>
             <div class="note-editor" id="note-editor" style="display:none;">
+                
                 <input type="text" id="note-title" placeholder="Note Title">
                 <select id="note-category">
                     <option value="">No Category</option>
                     <option value="__new__">+ Add New Category</option>
                 </select>
+                <input type="text" id="new-category-input" placeholder="New category name" style="display:none;">
+
                 <div id="note-content" contenteditable="true" placeholder="Start writing..."></div>
                 <p id="erorr"></p>
                 <div class="editor-actions">

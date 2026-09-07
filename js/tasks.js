@@ -5,7 +5,7 @@ let tasks = localStorage.getItem("tasks"); // fetched the tasks array from the l
 tasks = tasks ? JSON.parse(tasks) : []; // if it is null, provide an empty array.
 
 const username = JSON.parse(currentUser).username; // currentUser already been fetched in auth-guard.js.
-// const username = currentUser.username;
+
 const today = new Date().toISOString().split("T")[0]; //converting the todays date into YYYY-MM-DD format
 
 let currentView = "latestFive"; //default rendering to latest 5 added tasks
