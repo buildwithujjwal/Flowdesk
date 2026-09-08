@@ -7,8 +7,7 @@ const today = new Date().toISOString().split("T")[0];
 const noteEditor = document.getElementById("note-editor");
 const newNote = document.getElementById("new-note-btn");
 
-const currentView = "all";
-renderNotes(currentView);
+let currentView = "";
 renderCategories();
 
 newNote.addEventListener("click", () => {
@@ -18,6 +17,12 @@ newNote.addEventListener("click", () => {
     document.getElementById("note-title").value = "";
     document.getElementById("note-category").value = "";
     document.getElementById("note-content").innerHTML = "";
+
+    selectedNoteId = null;
+    renderNotes(currentView);
+
+    newCategoryInput.style.display = "none";
+    newCategoryInput.value = "";
 });
 
 const noteCategorySelect = document.getElementById("note-category");
@@ -47,13 +52,17 @@ saveNoteBtn.addEventListener("click", () => {
     if(!title) error = "title can't be empty";
     else if(    
         notes.find(
-            (note) => note.username === username && note.title === title
+            (note) => note.username === username && note.title === title && note.id !== selectedNoteId
         )
     ) error = "title already exists";
     else{
 
         if(noteCategorySelect.value === "__new__") {
             category = newCategoryInput.value.trim();
+        }
+
+        if(selectedNoteId !== null) {
+            notes = notes.filter((note) => note.id !== selectedNoteId);
         }
         
         notes.push({id, username, title, content, category, createdAt, updatedAt});
@@ -66,7 +75,8 @@ saveNoteBtn.addEventListener("click", () => {
 
         noteEditor.style.display = "none";
         document.getElementById("empty-state").style.display = "block";
-        renderNotes("all");
+        renderNotes(currentView);
+        renderCategories();
     }
 
     document.getElementById("error").innerHTML = error;
@@ -74,14 +84,22 @@ saveNoteBtn.addEventListener("click", () => {
 
 function renderNotes(currentView) {
 
+    document.getElementById("cards-title").innerHTML = currentView;
+
     let cardsGrid = document.getElementById("cards-grid");
-    
     let userNotes = [];
 
-    if(currentView === "all") {
-
+    if(currentView === "") {}
+    else if(currentView === "All Notes") {
+        
         for(let i = 0; i < notes.length; i++) {
             if(notes[i].username === username) userNotes.push(notes[i]);
+        }
+    }
+    else{
+
+        for(let i = 0; i < notes.length; i++) {
+            if(notes[i].username === username && notes[i].category === currentView) userNotes.push(notes[i]);
         }
     }
 
@@ -91,17 +109,16 @@ function renderNotes(currentView) {
 
     cardsGrid.innerHTML = `
         ${userNotes
-          .map((note) => {
-            return `
-                <div class="note-card" data-id="${note.id}">
-                    <h4>${note.title}</h4>  
-                    <p>${note.content}</p>
-                    <span class="note-category-tag">${note.category ? note.category : "No Category"}</span>
-                </div>
-                </div>
-            `;
-          })
-          .join("")}
+            .map((note) => {
+                return `
+                    <div class="note-card ${note.id === selectedNoteId ? "active" : ""}" data-id="${note.id}">
+                        <h4>${note.title}</h4>  
+                        <p>${note.content}</p>
+                        <span class="note-category-tag">${note.category ? note.category : "No Category"}</span>
+                    </div>
+                `;
+            })
+        .join("")}
     `;
 };
 
@@ -110,7 +127,6 @@ let selectedNoteId = null;
 
 const cardsGrid = document.getElementById("cards-grid");
 cardsGrid.addEventListener("click", (event) => {
-
     const card = event.target.closest(".note-card");
     if(!card) return;
 
@@ -124,8 +140,14 @@ cardsGrid.addEventListener("click", (event) => {
     noteEditor.style.display = "flex";
 
     document.getElementById("note-title").value = note.title;
-    document.getElementById("note-category").value = note.category;
     document.getElementById("note-content").innerHTML = note.content;
+
+    renderNotes(currentView);
+    renderCategories();
+    document.getElementById("note-category").value = note.category;
+
+    newCategoryInput.style.display = "none";
+    newCategoryInput.value = "";
 });
 
 
@@ -140,13 +162,15 @@ function renderCategories() {
         )
     ];
 
+    uniqueCategories.sort((a, b) => a.localeCompare(b));
+
     const categoryList = document.getElementById("category-list");
     categoryList.innerHTML = `
         ${uniqueCategories
             .map((cg) => {
-                return `<li data-category="${cg}">${cg}</li>`;
+                return `<li class="${cg === currentView ? "active" : ""}" data-category="${cg}">${cg}</li>`;
             })
-            .join("")}
+        .join("")}
     `;
 
     const noteCategorySelect = document.getElementById("note-category");
@@ -182,3 +206,40 @@ function deleteNote(id) {
     renderNotes(currentView);
     renderCategories();
 }
+
+const crossEditorBtn = document.getElementById("close-editor-btn");
+crossEditorBtn.addEventListener("click", () => {
+    document.getElementById("empty-state").style.display = "flex";
+    noteEditor.style.display = "none";
+    selectedNoteId = null;
+
+    renderNotes(currentView);
+    renderCategories();
+
+    newCategoryInput.style.display = "none";
+    newCategoryInput.value = "";
+});
+
+
+const allNotes = document.getElementById("all-notes-btn");
+allNotes.addEventListener("click", () => {
+    currentView = "All Notes";
+    renderNotes(currentView);
+    renderCategories(); 
+})
+
+
+const categoryList = document.getElementById("category-list");
+categoryList.addEventListener("click", (event) => {
+    const item = event.target.closest("[data-category]");
+    if (!item) return;
+
+    currentView = item.dataset.category;
+    renderNotes(currentView);
+    renderCategories();
+});
+
+
+// search feature is left
+// the card grid size is dynamic but should be static
+// if possible, the resizing of editor, cardGrid and categories section.

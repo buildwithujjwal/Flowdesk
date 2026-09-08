@@ -270,7 +270,7 @@
 
 .note-category-tag {
     display: inline-block;
-    margin-top: 8px;
+    margin-top: 4px;
     padding: 3px 9px;
     font-size: 0.65rem;
     font-weight: 500;
@@ -279,3 +279,71 @@
     border: 1px solid var(--notes-border);
     border-radius: 20px;
 }
+
+#all-notes-btn {
+    all: unset;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 12px;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--notes-text);
+    background: var(--notes-hover);
+    border-radius: 6px;
+    transition: background 0.15s ease;
+}
+
+#all-notes-btn:hover {
+    background: var(--notes-border);
+}
+
+.note-card.active {
+    background: var(--notes-button);
+}
+
+.note-card.active h4,
+.note-card.active p {
+    color: var(--notes-button-text);
+    opacity: 1;
+}
+
+.note-card.active .note-category-tag {
+    border-color: var(--notes-button-text);
+    color: var(--notes-button-text);
+}
+
+.sidebar ul li.active {
+    background: var(--notes-button);
+    color: var(--notes-button-text);
+}
+
+#close-editor-btn {
+    background: transparent;
+    border: 1px solid var(--notes-border);
+    color: var(--notes-text);
+}
+
+.sidebar ul li.active {
+    background: var(--notes-hover);
+    color: var(--notes-text);
+}
+
+.note-card.active {
+    background: var(--notes-hover);
+    border-left: 3px solid var(--notes-button);
+}
+
+.note-card.active h4,
+.note-card.active p {
+    color: var(--notes-text);
+    opacity: 1;
+}
+
+.note-card.active .note-category-tag {
+    border-color: var(--notes-border);
+    color: var(--notes-text);
+}
+

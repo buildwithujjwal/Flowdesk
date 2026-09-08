@@ -20,14 +20,12 @@
                 <h2>Notes</h2>
                 <button id="new-note-btn">+</button>
             </div>
+            <div class="notes-section">
+                <button id="all-notes-btn" class="section-label">All Notes</button>
+            </div>
             <div class="category-section">
                 <p class="section-label">Categories</p>
                 <ul id="category-list"></ul>
-                <button id="new-category-btn">+ New Category</button>
-            </div>
-            <div class="notes-section">
-                <p class="section-label">All Notes</p>
-                <ul id="note-list"></ul>
             </div>
         </aside>
  
@@ -36,7 +34,7 @@
                 <p>Select a note or create a new one</p>
             </div>
             <div class="note-editor" id="note-editor" style="display:none;">
-                
+
                 <input type="text" id="note-title" placeholder="Note Title">
                 <select id="note-category">
                     <option value="">No Category</option>
@@ -49,6 +47,7 @@
                 <div class="editor-actions">
                     <button id="save-note-btn">Save</button>
                     <button id="delete-note-btn">Delete</button>
+                    <button id="close-editor-btn">✕</button>
                 </div>
             </div>
         </main>
