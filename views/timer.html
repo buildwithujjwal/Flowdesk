@@ -4,11 +4,91 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flowdesk</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/nav.css">
+    <link rel="stylesheet" href="../css/timer.css">
     <script src="../js/auth-gaurd.js"></script>
-    <script src="../js/nav.js"></script>
+    <script src="../js/nav.js" defer></script>
+    <script src="../js/timer.js" defer></script>
+    <!-- <script src="../js/timer.js" defer></script> -->
 </head>
 <body>
     <div id="nav-placeholder"></div>
+
+    <div class="timer-layout" data="focus">
+        <aside class="timer-menu">
+
+            <p class="timer-menu-label">Session</p>
+            <nav class="timer-modes">
+                <button class="mode-btn is-active" data-mode="focus">Focus</button>
+                <button class="mode-btn" data-mode="short">Short break</button>
+                <button class="mode-btn" data-mode="long">Long break</button>
+            </nav>
+
+            <p class="timer-menu-label">Today</p>
+            <div class="timer-stats">
+                <div class="stat-row">
+                    <span>Sessions completed</span>
+                    <span id="stat-sessions">0</span>
+                </div>
+                <div class="stat-row">
+                    <span>Focus time</span>
+                    <span id="stat-minutes">0m</span>
+                </div>
+            </div>
+
+        <p class="timer-menu-label">Durations</p>
+        <div class="timer-durations">
+            <label class="duration-field">
+                Focus
+                <input type="number" id="focusDuration" min="1" max="90" value="25">
+            </label>
+            <label class="duration-field">
+                Short break
+                <input type="number" id="shortDuration" min="1" max="30" value="5">
+            </label>
+            <label class="duration-field">
+                Long break
+                <input type="number" id="longDuration" min="1" max="60" value="15">
+            </label>
+            <label class="duration-field">
+                Rounds
+                <input type="number" id="roundsPerCycle" min="1" max="12" value="4">
+            </label>
+        </div>
+
+        <p class="timer-menu-label">History</p>
+        <ul class="timer-history" id="history-list">
+            <!-- filled by renderHistory() -->
+        </ul>
+        </aside>
+
+        <main class="timer-main">
+            <p class="timer-mode-label" id="mode-label">Focus session</p>
+
+            <div class="timer-ring-wrap">
+                <svg class="timer-ring" viewBox="0 0 220 220">
+                    <circle class="ring-track" cx="110" cy="110" r="100"></circle>
+                    <circle class="ring-progress" id="ring-progress" cx="110" cy="110" r="100"></circle>
+                </svg>
+                <div class="timer-face">
+                    <span class="timer-time" id="timer-display">25:00</span>
+                    <span class="timer-cycle" id="cycle-label">Round 1 of 4</span>
+                </div>
+            </div>
+
+            <div class="timer-controls">
+                <button class="control-btn ghost-btn" id="reset-btn" aria-label="Reset timer">Reset</button>
+                <button class="control-btn primary-btn" id="start-pause-btn">Start</button>
+                <button class="control-btn ghost-btn" id="skip-btn">Skip</button>
+            </div>
+
+            <div class="timer-dots" id="cycle-dots">
+                <span class="dot is-filled"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+        </main>
+    </div>
 </body>
 </html>
