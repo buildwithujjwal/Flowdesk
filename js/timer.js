@@ -4,21 +4,6 @@ const username = JSON.parse(currentUser).username;
 const today = new Date().toISOString().split("T")[0];
 const storageKey = `pomodoro_${username}`;
 
-let pomodoro = localStorage.getItem(storageKey);
-pomodoro = pomodoro ? JSON.parse(pomodoro) : null;
-
-if(!pomodoro) {
-    pomodoro = {
-        settings: {focusDuration: 25, shortDuration: 5, longDuration: 15, roundsPerCycle: 4 },
-        session: { mode: "focus", remainingSeconds: 25 * 60, isRunning: false, currentRound: 1 },
-        history: {},
-    };
-}
-
-if(!pomodoro.history[today]) {
-    pomodoro.history[today] = {sessionsCompleted: 0, focusMinutes: 0 };
-}
-
 const timerDisplay = document.getElementById("timer-display");
 const cycleLabel = document.getElementById("cycle-label");
 const modeLabel = document.getElementById("mode-label");
@@ -28,7 +13,38 @@ const startPauseBtn = document.getElementById("start-pause-btn");
 const modeButtons = document.querySelectorAll(".mode-btn");
 const timerLayout = document.querySelector(".timer-layout");
 
+const statSessions = document.getElementById("stat-sessions");
+const statMinutes = document.getElementById("stat-minutes");
+
+const audioCtx = new AudioContext();
 const timerWorker = new Worker("../js/timer-worker.js");
+
+const resetBtn = document.getElementById("reset-btn");
+const skipBtn = document.getElementById("skip-btn");
+
+const sessionOverlay = document.getElementById("session-overlay");
+const overlayMessage = document.getElementById("overlay-message");
+
+let alarmInterval = null;
+let activeNotification = null;
+
+let pomodoro = localStorage.getItem(storageKey);
+pomodoro = pomodoro ? JSON.parse(pomodoro) : null;
+
+if(!pomodoro) {
+    pomodoro = {
+        settings: {focusDuration: 0.3, shortDuration: 0.1, longDuration: 0.2, roundsPerCycle: 4},
+        session: { mode: "focus", remainingSeconds: 0.3 * 60, isRunning: false, currentRound: 1 },
+        history: {},
+    };
+}
+
+if(!pomodoro.history[today]) {
+    pomodoro.history[today] = {sessionsCompleted: 0, focusMinutes: 0 };
+}
+
+statSessions.textContent = pomodoro.history[today].sessionsCompleted;
+statMinutes.textContent = `${pomodoro.history[today].focusMinutes}m`;
 
 timerWorker.onmessage = function (event) {
     if (event.data.type === "tick") {
@@ -37,10 +53,44 @@ timerWorker.onmessage = function (event) {
     }
 
     if (event.data.type === "done") {
-        console.log("session finished");
+        
+        let wasFocus = pomodoro.session.mode === "focus";
+
+        if(wasFocus) {
+            pomodoro.history[today].sessionsCompleted++;
+            pomodoro.history[today].focusMinutes += pomodoro.settings.focusDuration;
+        }
+
+        advanceSession();
+        pomodoro.session.isRunning = false;
+
+        savePomodoro();
+        renderTimer();
+        renderHistory();
+
+        let message = wasFocus ? "Break time!" : "Back to work!";
+        showSessionOverlay(message);
     }
 };
 
+function playAlarmSound() {
+    let oscillator = audioCtx.createOscillator();
+    let gainNode = audioCtx.createGain();
+
+    gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);             
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+
+    oscillator.frequency.value = 880;
+    oscillator.type = "sine";
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    oscillator.start();
+    oscillator.stop(audioCtx.currentTime + 0.3);
+}
+
+function showSessionNotification(wasFocus) {};
 
 startPauseBtn.addEventListener("click", () => {
 
@@ -50,6 +100,9 @@ startPauseBtn.addEventListener("click", () => {
     }
 
     else {
+        if (Notification.permission === "default") {
+            Notification.requestPermission();
+        }
         timerWorker.postMessage({ type: "start", seconds: pomodoro.session.remainingSeconds });
         pomodoro.session.isRunning = true;
     }
@@ -58,7 +111,7 @@ startPauseBtn.addEventListener("click", () => {
     renderTimer();
 });
 
-const resetBtn = document.getElementById("reset-btn");
+
 resetBtn.addEventListener("click", () => {
 
     timerWorker.postMessage({ type: "stop" });
@@ -70,7 +123,6 @@ resetBtn.addEventListener("click", () => {
     renderTimer();
 })
 
-const skipBtn = document.getElementById("skip-btn");
 skipBtn.addEventListener("click", () => {
 
     timerWorker.postMessage({ type: "stop" });
@@ -125,6 +177,54 @@ function advanceSession() {
 
     pomodoro.session.remainingSeconds = getCurrentModeDuration();
 }
+
+function showSessionOverlay(message) {
+
+    overlayMessage.textContent = message;
+    sessionOverlay.classList.add("is-visible");
+
+    playAlarmSound();
+
+    alarmInterval = setInterval(() => {
+        playAlarmSound();
+    }, 2000);
+
+    if (Notification.permission === "granted") {
+        activeNotification = new Notification("Flowdesk", {
+            body: message,
+            tag: "pomodoro-session",
+            requireInteraction: true,
+        });
+    }
+}
+
+function hideSessionOverlay() {
+
+    sessionOverlay.classList.remove("is-visible");
+
+    clearInterval(alarmInterval);
+    alarmInterval = null;
+
+    if (activeNotification) {
+        activeNotification.close();
+        activeNotification = null;
+    }
+
+    pomodoro.session.isRunning = true;
+    timerWorker.postMessage({ type: "start", seconds: pomodoro.session.remainingSeconds });
+
+    savePomodoro();
+    renderTimer();
+}
+
+document.addEventListener("keydown", () => {    
+    if (["Alt", "Control", "Meta", "Shift"].includes(event.key)) return;
+    if (!document.hasFocus()) return;
+
+    if (sessionOverlay.classList.contains("is-visible")) {
+        hideSessionOverlay();
+    }
+});
 
 
 savePomodoro();
