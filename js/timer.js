@@ -26,10 +26,116 @@ const ringProgress = document.getElementById("ring-progress");
 const cycleDots = document.getElementById("cycle-dots");
 const startPauseBtn = document.getElementById("start-pause-btn");
 const modeButtons = document.querySelectorAll(".mode-btn");
+const timerLayout = document.querySelector(".timer-layout");
+
+const timerWorker = new Worker("../js/timer-worker.js");
+
+timerWorker.onmessage = function (event) {
+    if (event.data.type === "tick") {
+        pomodoro.session.remainingSeconds = event.data.remaining;
+        renderTimer();
+    }
+
+    if (event.data.type === "done") {
+        console.log("session finished");
+    }
+};
+
+
+startPauseBtn.addEventListener("click", () => {
+
+    if (pomodoro.session.isRunning) {
+        timerWorker.postMessage({ type: "stop" });
+        pomodoro.session.isRunning = false;
+    }
+
+    else {
+        timerWorker.postMessage({ type: "start", seconds: pomodoro.session.remainingSeconds });
+        pomodoro.session.isRunning = true;
+    }
+
+    savePomodoro();
+    renderTimer();
+});
+
+const resetBtn = document.getElementById("reset-btn");
+resetBtn.addEventListener("click", () => {
+
+    timerWorker.postMessage({ type: "stop" });
+
+    pomodoro.session.isRunning = false;
+    pomodoro.session.remainingSeconds = getCurrentModeDuration();
+
+    savePomodoro();
+    renderTimer();
+})
+
+const skipBtn = document.getElementById("skip-btn");
+skipBtn.addEventListener("click", () => {
+
+    timerWorker.postMessage({ type: "stop" });
+
+    advanceSession();
+    pomodoro.session.isRunning = true;
+    timerWorker.postMessage({ type: "start", seconds: pomodoro.session.remainingSeconds });
+
+    savePomodoro();
+    renderTimer();
+})
+
+
+modeButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+        
+        timerWorker.postMessage({ type: "stop" });
+
+        pomodoro.session.mode = btn.dataset.mode;
+        pomodoro.session.remainingSeconds = getCurrentModeDuration();
+        pomodoro.session.isRunning = false;
+
+        savePomodoro();
+        renderTimer();
+    })
+})
+
+
+function advanceSession() {
+
+    if (pomodoro.session.mode === "focus") {
+
+        pomodoro.session.currentRound++;
+
+        if (pomodoro.session.currentRound > pomodoro.settings.roundsPerCycle) {
+            pomodoro.session.mode = "long";
+        }
+
+        else {
+            pomodoro.session.mode = "short";
+        }
+    }
+
+    else if (pomodoro.session.mode === "short") {
+        pomodoro.session.mode = "focus";
+    }
+
+    else {
+        pomodoro.session.mode = "focus";
+        pomodoro.session.currentRound = 1;
+    }
+
+    pomodoro.session.remainingSeconds = getCurrentModeDuration();
+}
+
 
 savePomodoro();
 renderTimer();
 renderHistory();
+
+function getCurrentModeDuration() {
+    if (pomodoro.session.mode === "focus") return pomodoro.settings.focusDuration * 60;
+    else if (pomodoro.session.mode === "short") return pomodoro.settings.shortDuration * 60;
+    else return pomodoro.settings.longDuration * 60;
+}
 
 function savePomodoro() {
     localStorage.setItem(storageKey, JSON.stringify(pomodoro));
@@ -37,11 +143,12 @@ function savePomodoro() {
 
 function renderTimer() {
 
+    timerLayout.dataset.mode = pomodoro.session.mode;
+
     modeButtons.forEach((btn) => {
         if (btn.dataset.mode === pomodoro.session.mode)  btn.classList.add("is-active");
         else btn.classList.remove("is-active");
     })
-
 
     if(pomodoro.session.mode == "focus") modeLabel.textContent = "Focus session";
     else if (pomodoro.session.mode === "short") modeLabel.textContent = "Short break";
@@ -56,18 +163,20 @@ function renderTimer() {
 
     timerDisplay.textContent = `${mins}:${secs}`;
 
-
-    cycleLabel.textContent = `Round ${pomodoro.session.currentRound} of ${pomodoro.settings.roundsPerCycle}`;
+    if(pomodoro.session.mode === "short") {
+        cycleLabel.textContent = "you earned it";
+    }
+    else if(pomodoro.session.mode === "long") {
+        cycleLabel.textContent = "time for a nap";
+    }
+    else cycleLabel.textContent = `Round ${pomodoro.session.currentRound} of ${pomodoro.settings.roundsPerCycle}`;
 
 
     if (pomodoro.session.isRunning) startPauseBtn.textContent = "Pause";
     else startPauseBtn.textContent = "Start";
 
 
-    let totalSeconds;
-    if(pomodoro.session.mode === "focus") totalSeconds = pomodoro.settings.focusDuration * 60;
-    else if (pomodoro.session.mode == "short") totalSeconds = pomodoro.settings.shortDuration * 60;
-    else totalSeconds = pomodoro.settings.longDuration * 60;
+    let totalSeconds = getCurrentModeDuration();
 
     let fraction = pomodoro.session.remainingSeconds / totalSeconds;
     let circumference = 628;
