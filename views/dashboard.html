@@ -1,27 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flowdesk</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="../css/nav.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
     <script src="../js/auth-gaurd.js"></script>
-    <script src="../js/nav.js"></script>
+    <script src="../js/nav.js" defer></script>
+    <script src="../js/dashboard.js" defer></script>
 </head>
+
 <body>
     <div id="nav-placeholder"></div>
 
-    <div>
-        <h1>Welcome, <span id="user-name">User</span></h1>
+    <div class="dash-layout">
 
-        <div id="clock"></div>  
-        
-        <div class="stats">
-            <p>Tasks: <span id="task-count">0</span></p>
-            <p>Notes: <span id="note-count">0</span></p>
+        <header class="dash-masthead">
+            <div class="masthead-greeting">
+                <h1 id="greeting-text"></h1>
+                <p id="greeting-date"></p>
+            </div>
+
+            <div class="masthead-meta">
+                <div class="dash-clock" id="live-clock"></div>
+                <div class="meta-divider" aria-hidden="true"></div>
+                <div class="header-weather">
+                    <div class="weather-widget" id="weather-loaded">
+                        <span class="weather-temp" id="weather-temp">21°C</span>
+                        <div class="weather-info">
+                            <span class="weather-condition" id="weather-condition">Partly cloudy</span>
+                            <span class="weather-location" id="weather-location">Rewari, IN</span>
+                        </div>
+                    </div>
+                    <div class="weather-fallback" id="weather-fallback" hidden>
+                        <p class="weather-fallback-text">Enable location for weather.</p>
+                        <button class="weather-retry-btn" id="weather-retry-btn">Allow location</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="dash-body">
+
+            <div class="dash-main">
+
+                <section class="focus-hero">
+                    <div class="focus-hero-stat">
+                        <span class="focus-hero-number" id="stat-minutes">0m</span>
+                        <span class="focus-hero-label">focused today</span>
+                    </div>
+                    <p class="focus-hero-sub"><span id="stat-sessions">0</span> sessions completed</p>
+                </section>
+
+                <section class="dash-block start-focus-block">
+                    <div class="start-focus-text">
+                        <h2 class="block-title">Ready to focus?</h2>
+                        <p class="start-focus-sub">Jump into a session, pick up where you left off.</p>
+                    </div>
+                    <a href="timer.html" class="start-focus-btn">Start a session</a>
+                </section>
+
+                <section class="dash-block">
+                    <div class="block-head">
+                        <h2 class="block-title">Upcoming Tasks</h2>
+                        <a href="todo.html" class="block-link">View all</a>
+                    </div>
+                    <ul class="preview-list" id="upcoming-tasks-list">
+                        <li class="preview-item">
+                            <span class="preview-dot"></span>
+                            <span class="preview-text">Finish project proposal</span>
+                            <span class="preview-meta">Today</span>
+                        </li>
+                        <li class="preview-item">
+                            <span class="preview-dot"></span>
+                            <span class="preview-text">Reply to study group</span>
+                            <span class="preview-meta">Tomorrow</span>
+                        </li>
+                        <li class="preview-empty" hidden>Nothing on the list. Add your first task above.</li>
+                    </ul>
+                </section>
+
+            </div>
+
+            <aside class="dash-rail">
+
+                <section class="rail-block rail-stats">
+                    <div class="rail-stat-row">
+                        <span class="rail-stat-number" id="stat-tasks">0</span>
+                        <span class="rail-stat-label">Total tasks</span>
+                    </div>
+                    <div class="rail-stat-row">
+                        <span class="rail-stat-number" id="stat-notes">0</span>
+                        <span class="rail-stat-label">notes</span>
+                    </div>
+                </section>
+                
+                <section class="rail-block rail-week">
+                    <h2 class="block-title">Focus Chart  ( This week )</h2>
+                    <div class="week-chart" id="week-chart">
+                        <div class="week-bar-col">
+                            <div class="week-bar" id="week-bar-mon" style="--bar-h: 24px"></div>
+                            <span class="week-bar-label">M</span>
+                        </div>
+                        <div class="week-bar-col">
+                            <div class="week-bar" id="week-bar-tue" style="--bar-h: 44px"></div>
+                            <span class="week-bar-label">T</span>
+                        </div>
+                        <div class="week-bar-col">
+                            <div class="week-bar is-today" id="week-bar-wed" style="--bar-h: 56px"></div>
+                            <span class="week-bar-label">W</span>
+                        </div>
+                        <div class="week-bar-col">
+                            <div class="week-bar" id="week-bar-thu" style="--bar-h: 32px"></div>
+                            <span class="week-bar-label">T</span>
+                        </div>
+                        <div class="week-bar-col">
+                            <div class="week-bar" id="week-bar-fri" style="--bar-h: 48px"></div>
+                            <span class="week-bar-label">F</span>
+                        </div>
+                        <div class="week-bar-col">
+                            <div class="week-bar" id="week-bar-sat" style="--bar-h: 12px"></div>
+                            <span class="week-bar-label">S</span>
+                        </div>
+                        <div class="week-bar-col">
+                            <div class="week-bar" id="week-bar-sun" style="--bar-h: 8px"></div>
+                            <span class="week-bar-label">S</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="rail-block">
+                    <div class="block-head">
+                        <h2 class="block-title">Recent note</h2>
+                        <a href="notes.html" class="block-link">View all</a>
+                    </div>
+                    <div class="note-preview" id="recent-note">
+                        <h3 class="note-preview-title" id="recent-note-title">Lecture recap</h3>
+                        <p class="note-preview-body" id="recent-note-body">
+                            Covered the event loop, microtasks vs macrotasks, and how the call stack clears before...
+                        </p>
+                        <span class="note-preview-time" id="recent-note-time">Updated 2 hours ago</span>
+                    </div>
+                    <p class="note-preview-empty" id="recent-note-empty" hidden>No notes yet. Your first one will show
+                        up here.</p>
+                </section>
+
+            </aside>
+
         </div>
-
-        <div id="weather">Weather loading...</div>
     </div>
 </body>
+
 </html>
