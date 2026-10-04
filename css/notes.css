@@ -14,6 +14,17 @@
     overflow: hidden;
 }
 
+[data-theme="dark"] .notes-layout {
+  --notes-bg: #15151a;
+  --notes-sidebar-bg: #1d1d23;
+  --notes-text: #e4e4e7;
+  --notes-border: #2d2d35;
+  --notes-input-bg: #1d1d23;
+  --notes-hover: #26262e;
+  --notes-button: #e4e4e7;
+  --notes-button-text: #15151a;
+}
+
 .sidebar {
     width: 240px;
     flex-shrink: 0;

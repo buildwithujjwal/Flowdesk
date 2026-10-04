@@ -1,18 +1,37 @@
-// triggers when user click on "Don't have an account yet? on login page"
-const registerClicked = document.getElementById("show-register");
-registerClicked.addEventListener("click", (event) => {
-    event.preventDefault();
-    document.getElementById("login").classList.add('hidden');
-    document.getElementById("register").classList.remove('hidden')
-})
+// -------------------------------------------------login page------------------------------------------------
 
-// triggers when user click on "Already have an account? on register page"
-const loginClicked = document.getElementById("show-login");
-loginClicked.addEventListener("click", (event) => {
-    event.preventDefault();
-    document.getElementById("register").classList.add('hidden');
-    document.getElementById("login").classList.remove('hidden');
-})
+// show the auth forms when "Get Started" is clicked
+const getStartedBtn = document.getElementById("get-started-btn");
+getStartedBtn.addEventListener("click", () => {
+    document.getElementById("landing").classList.add("hidden");
+    document.getElementById("auth-wrapper").classList.remove("hidden");
+});
+
+// go back to the landing page from the auth forms
+const backBtn = document.getElementById("back-to-landing");
+backBtn.addEventListener("click", () => {
+    document.getElementById("auth-wrapper").classList.add("hidden");
+    document.getElementById("landing").classList.remove("hidden");
+});
+
+// dark mode toggle button
+const darkToggleBtn = document.getElementById("dark-toggle-mode");
+
+// sync icon to whatever theme is already applied
+darkToggleBtn.textContent = document.documentElement.dataset.theme === "dark" ? "☀️" : "🌙";
+
+darkToggleBtn.addEventListener("click", () => {
+    let isDark = document.documentElement.dataset.theme === "dark";
+    let newTheme = isDark ? "light" : "dark";
+
+    document.documentElement.dataset.theme = newTheme;
+    localStorage.setItem("theme", newTheme);
+    darkToggleBtn.textContent = newTheme === "dark" ? "☀️" : "🌙";
+});
+
+
+//------------------ login / register toggling ---------------------
+
 
 // checks is the username exists and if do exists check its password and then create a session for user and redirect the user to dashboard.html
 const loginButton = document.getElementById("login-button");
@@ -95,3 +114,18 @@ registerButton.addEventListener("click", (event) => {
     else document.getElementById("register-error-msg").innerHTML = error;
 })
 
+// triggers when user click on "Don't have an account yet? on login page"
+const registerClicked = document.getElementById("show-register");
+registerClicked.addEventListener("click", (event) => {
+    event.preventDefault();
+    document.getElementById("login").classList.add('hidden');
+    document.getElementById("register").classList.remove('hidden')
+})
+
+// triggers when user click on "Already have an account? on register page"
+const loginClicked = document.getElementById("show-login");
+loginClicked.addEventListener("click", (event) => {
+    event.preventDefault();
+    document.getElementById("register").classList.add('hidden');
+    document.getElementById("login").classList.remove('hidden');
+})

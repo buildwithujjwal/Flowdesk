@@ -31,7 +31,6 @@ addTask.addEventListener("submit", (event) => {
   let error = "";
   if (!text) error = "task cannot be empty";
   else if (!dueDate) error = "Select the Date";
-  // else if (dueDate < today) error = "Select a valid Date";
   else if (
     tasks.find(
       (task) => task.username === currentUser.username && task.text === text,
@@ -74,7 +73,7 @@ function renderTasks(str) {
   let userTasks = [];
   for (let i = 0; i < tasks.length; i++) {
     
-    if (tasks[i].username === username) userTasks.push(tasks[i]);
+    if (tasks[i].username === username)   userTasks.push(tasks[i]);
   }
 
   // button "all" clicked

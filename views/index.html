@@ -1,33 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flowdesk</title>
+
+    <script>
+        let savedTheme = localStorage.getItem("theme");
+        if (savedTheme) {
+            document.documentElement.dataset.theme = savedTheme;
+        }
+    </script>
+
     <link rel="stylesheet" href="../css/style.css">
     <script src="../js/auth.js" defer></script>
 </head>
+
 <body class="auth-page">
-    <div id="login">
-        <form action="">
-            <h2>Login</h2>
-            <input id="login-username"  type="text" placeholder="Username"> <br>
-            <input id="login-password"  type="password" placeholder="Password"> <br>
-            <button id="login-button">Login</button> <br>
-            <p id="login-error-msg" class="error"></p>
-            <a href="#" id="show-register">Don't have an account yet?</a>
-        </form>
+
+    <header class="auth-topbar">
+        <span class="topbar-brand">Flowdesk</span>
+        <button type="button" id="dark-toggle-mode">🌙</button>
+    </header>
+
+    <div class="auth-bg-shape shape-one"></div>
+    <div class="auth-bg-shape shape-two"></div>
+
+    <div id="landing">
+        <p class="landing-eyebrow">Flowdesk</p>
+        <h1 class="landing-quote">Focus is not something you find.<br>It's something you build.</h1>
+        <p class="landing-subtext">Tasks, notes, and a pomodoro timer - in one quiet place.</p>
+        <button id="get-started-btn" class="landing-cta">Get Started</button>
     </div>
-    <div id="register" class="hidden">
-        <form action="">
-            <h2>Register</h2>
-            <input id="register-username" type="text" placeholder="Set Username"> <br>
-            <input id="register-password" type="password" placeholder="Set Password"> <br>
-            <button id="register-button">Register</button> <br>
-            <p id="register-error-msg" class="error"></p>
-            <a href="#" id="show-login">Already have an account?</a>
-        </form>
+
+    <div id="auth-wrapper" class="hidden">
+        <button id="back-to-landing" class="back-btn" aria-label="Back">&larr;</button>
+
+        <div id="login">
+            <form action="">
+                <h2>Login</h2>
+                <input id="login-username" type="text" placeholder="Username"> <br>
+                <input id="login-password" type="password" placeholder="Password"> <br>
+                <button id="login-button">Login</button> <br>
+                <p id="login-error-msg" class="error"></p>
+                <a href="#" id="show-register">Don't have an account yet?</a>
+            </form>
+        </div>
+        <div id="register" class="hidden">
+            <form action="">
+                <h2>Register</h2>
+                <input id="register-username" type="text" placeholder="Set Username"> <br>
+                <input id="register-password" type="password" placeholder="Set Password"> <br>
+                <button id="register-button">Register</button> <br>
+                <p id="register-error-msg" class="error"></p>
+                <a href="#" id="show-login">Already have an account?</a>
+            </form>
+        </div>
     </div>
 
 </body>
+
 </html>

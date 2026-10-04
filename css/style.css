@@ -1,8 +1,12 @@
-/* for index.html */
-
 * {
   box-sizing: border-box;
   font-family: system-ui, sans-serif;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
 }
 
 .auth-page {
@@ -11,15 +15,165 @@
   align-items: center;
   min-height: 100vh;
   margin: 0;
-  background: #f4f4f4;
-  gap: 2rem;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(160deg, #fafafa 0%, #f0f0f2 100%);
 }
+
+/* ---------- Top bar ---------- */
+
+.auth-topbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 2rem;
+  z-index: 2;
+}
+
+.topbar-brand {
+  font-weight: 700;
+  letter-spacing: 1px;
+  font-size: 1rem;
+  color: #222222;
+}
+
+.auth-topbar button {
+  border: none;
+  background: transparent;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+}
+
+.auth-topbar button:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* ---------- Decorative background shapes ---------- */
+
+.auth-bg-shape {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.35;
+  z-index: 0;
+}
+
+.shape-one {
+  width: 400px;
+  height: 400px;
+  background: #cfd8ff;
+  top: -100px;
+  left: -100px;
+}
+
+.shape-two {
+  width: 350px;
+  height: 350px;
+  background: #ffd9c9;
+  bottom: -120px;
+  right: -80px;
+}
+
+/* ---------- Landing ---------- */
+
+#landing {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 1.25rem;
+  padding: 2rem;
+  max-width: 640px;
+}
+
+.landing-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-size: 0.8rem;
+  color: #888888;
+  margin: 0;
+}
+
+.landing-quote {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #222222;
+  margin: 0;
+}
+
+.landing-subtext {
+  font-size: 1rem;
+  color: #666666;
+  margin: 0;
+}
+
+.landing-cta {
+  margin-top: 1rem;
+  padding: 0.85rem 2.2rem;
+  border: none;
+  border-radius: 6px;
+  background: #222222;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.landing-cta:hover {
+  background: #444444;
+}
+
+/* ---------- Auth wrapper ---------- */
+
+#auth-wrapper {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.back-btn {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border: 1px solid #ececec;
+  border-radius: 8px 0 8px 0;
+  color: #888888;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.back-btn:hover {
+  color: #222222;
+  background: #f5f5f5;
+}
+
+/* ---------- Login / Register forms ---------- */
 
 form {
   background: white;
   padding: 2rem;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ececec;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -51,13 +205,95 @@ a {
   color: #333;
 }
 
-#register {
-    
+.error {
+  color: red;
+  font-size: 0.8rem;
 }
+
+/* ---------- Utility ---------- */
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
-/* for nav.html */
+/* ---------- Dark mode ---------- */
 
+[data-theme="dark"] .auth-page {
+  background: linear-gradient(160deg, #15151a 0%, #1a1a20 100%);
+}
+
+[data-theme="dark"] .topbar-brand {
+  color: #e4e4e7;
+}
+
+[data-theme="dark"] .landing-eyebrow {
+  color: #8a8a92;
+}
+
+[data-theme="dark"] .landing-quote {
+  color: #e4e4e7;
+}
+
+[data-theme="dark"] .landing-subtext {
+  color: #8a8a92;
+}
+
+[data-theme="dark"] .landing-cta {
+  background: #e4e4e7;
+  color: #15151a;
+}
+
+[data-theme="dark"] .landing-cta:hover {
+  background: #d0d0d5;
+}
+
+[data-theme="dark"] .back-btn {
+  color: #8a8a92;
+}
+
+[data-theme="dark"] .back-btn:hover {
+  color: #e4e4e7;
+}
+
+[data-theme="dark"] form {
+  background: #1d1d23;
+  border-color: #2d2d35;
+}
+
+[data-theme="dark"] input {
+  background: #1d1d23;
+  border-color: #2d2d35;
+  color: #e4e4e7;
+}
+
+[data-theme="dark"] button {
+  background: #e4e4e7;
+  color: #15151a;
+}
+
+[data-theme="dark"] button:hover {
+  background: #d0d0d5;
+}
+
+[data-theme="dark"] a {
+  color: #e4e4e7;
+}
+
+[data-theme="dark"] form h2 {
+  color: #e4e4e7;
+}
+
+[data-theme="dark"] .auth-bg-shape {
+  opacity: 0.2;
+}
+
+[data-theme="dark"] .back-btn {
+  background: #1d1d23;
+  border-color: #2d2d35;
+  color: #8a8a92;
+}
+
+[data-theme="dark"] .back-btn:hover {
+  background: #26262e;
+  color: #e4e4e7;
+}

@@ -14,6 +14,17 @@
     background: var(--tasks-bg);
 }
 
+[data-theme="dark"] .tasks-layout {
+  --tasks-bg: #15151a;
+  --tasks-sidebar-bg: #1d1d23;
+  --tasks-text: #e4e4e7;
+  --tasks-border: #2d2d35;
+  --tasks-input-bg: #1d1d23;
+  --tasks-hover: #26262e;
+  --tasks-button: #e4e4e7;
+  --tasks-button-text: #15151a;
+}
+
 .tasks-menu {
     width: 300px;
     min-width: 300px;

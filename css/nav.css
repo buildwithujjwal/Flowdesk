@@ -1,9 +1,31 @@
+* {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
 nav {
+  --nav-bg: #222222;
+  --nav-text: #ffffff;
+  --nav-button: #444444;
+  --nav-button-hover: #666666;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 1rem 2rem;
-  background: #222;
+  background: var(--nav-bg);
+}
+
+[data-theme="dark"] nav {
+  --nav-bg: #15151a;
+  --nav-text: #e4e4e7;
+  --nav-button: #26262e;
+  --nav-button-hover: #35353f;
 }
 
 nav ul {
@@ -15,7 +37,7 @@ nav ul {
 }
 
 nav a {
-  color: white;
+  color: var(--nav-text);
   text-decoration: none;
   font-size: 0.95rem;
 }
@@ -29,13 +51,13 @@ nav button {
   padding: 0.4rem 0.8rem;
   border: none;
   border-radius: 4px;
-  background: #444;
-  color: white;
+  background: var(--nav-button);
+  color: var(--nav-text);
   cursor: pointer;
 }
 
 nav button:hover {
-  background: #666;
+  background: var(--nav-button-hover);
 }
 
 .error {
