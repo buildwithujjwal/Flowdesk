@@ -33,10 +33,10 @@
                 <div class="meta-divider" aria-hidden="true"></div>
                 <div class="header-weather">
                     <div class="weather-widget" id="weather-loaded">
-                        <span class="weather-temp" id="weather-temp">21°C</span>
+                        <span class="weather-temp" id="weather-temp"></span>
                         <div class="weather-info">
-                            <span class="weather-condition" id="weather-condition">Partly cloudy</span>
-                            <span class="weather-location" id="weather-location">Rewari, IN</span>
+                            <span class="weather-condition" id="weather-condition"></span>
+                            <span class="weather-location" id="weather-location"></span>
                         </div>
                     </div>
                     <div class="weather-fallback" id="weather-fallback" hidden>
@@ -53,10 +53,10 @@
 
                 <section class="focus-hero">
                     <div class="focus-hero-stat">
-                        <span class="focus-hero-number" id="stat-minutes">0m</span>
+                        <span class="focus-hero-number" id="stat-minutes"></span>
                         <span class="focus-hero-label">focused today</span>
                     </div>
-                    <p class="focus-hero-sub"><span id="stat-sessions">0</span> sessions completed</p>
+                    <p class="focus-hero-sub"><span id="stat-sessions">0</span></p>
                 </section>
 
                 <section class="dash-block start-focus-block">
@@ -75,15 +75,15 @@
                     <ul class="preview-list" id="upcoming-tasks-list">
                         <li class="preview-item">
                             <span class="preview-dot"></span>
-                            <span class="preview-text">Finish project proposal</span>
-                            <span class="preview-meta">Today</span>
+                            <span class="preview-text" id="task1"></span>
+                            <span class="preview-meta" id="task1date"></span>
                         </li>
                         <li class="preview-item">
                             <span class="preview-dot"></span>
-                            <span class="preview-text">Reply to study group</span>
-                            <span class="preview-meta">Tomorrow</span>
+                            <span class="preview-text" id="task2"></span>
+                            <span class="preview-meta" id="task2date"></span>
                         </li>
-                        <li class="preview-empty" hidden>Nothing on the list. Add your first task above.</li>
+                        <li class="preview-empty" hidden>Nothing on the list. <a href="tasks.html" class="add-link">Add</a> your first task.</li>
                     </ul>
                 </section>
 
@@ -93,46 +93,12 @@
 
                 <section class="rail-block rail-stats">
                     <div class="rail-stat-row">
-                        <span class="rail-stat-number" id="stat-tasks">0</span>
-                        <span class="rail-stat-label">Total tasks</span>
+                        <span class="rail-stat-number" id="stat-tasks"></span>
+                        <span class="rail-stat-label">Active tasks</span>
                     </div>
                     <div class="rail-stat-row">
-                        <span class="rail-stat-number" id="stat-notes">0</span>
-                        <span class="rail-stat-label">notes</span>
-                    </div>
-                </section>
-                
-                <section class="rail-block rail-week">
-                    <h2 class="block-title">Focus Chart  ( This week )</h2>
-                    <div class="week-chart" id="week-chart">
-                        <div class="week-bar-col">
-                            <div class="week-bar" id="week-bar-mon" style="--bar-h: 24px"></div>
-                            <span class="week-bar-label">M</span>
-                        </div>
-                        <div class="week-bar-col">
-                            <div class="week-bar" id="week-bar-tue" style="--bar-h: 44px"></div>
-                            <span class="week-bar-label">T</span>
-                        </div>
-                        <div class="week-bar-col">
-                            <div class="week-bar is-today" id="week-bar-wed" style="--bar-h: 56px"></div>
-                            <span class="week-bar-label">W</span>
-                        </div>
-                        <div class="week-bar-col">
-                            <div class="week-bar" id="week-bar-thu" style="--bar-h: 32px"></div>
-                            <span class="week-bar-label">T</span>
-                        </div>
-                        <div class="week-bar-col">
-                            <div class="week-bar" id="week-bar-fri" style="--bar-h: 48px"></div>
-                            <span class="week-bar-label">F</span>
-                        </div>
-                        <div class="week-bar-col">
-                            <div class="week-bar" id="week-bar-sat" style="--bar-h: 12px"></div>
-                            <span class="week-bar-label">S</span>
-                        </div>
-                        <div class="week-bar-col">
-                            <div class="week-bar" id="week-bar-sun" style="--bar-h: 8px"></div>
-                            <span class="week-bar-label">S</span>
-                        </div>
+                        <span class="rail-stat-number" id="stat-notes">8</span>
+                        <span class="rail-stat-label">Total notes</span>
                     </div>
                 </section>
 
@@ -142,11 +108,9 @@
                         <a href="notes.html" class="block-link">View all</a>
                     </div>
                     <div class="note-preview" id="recent-note">
-                        <h3 class="note-preview-title" id="recent-note-title">Lecture recap</h3>
-                        <p class="note-preview-body" id="recent-note-body">
-                            Covered the event loop, microtasks vs macrotasks, and how the call stack clears before...
-                        </p>
-                        <span class="note-preview-time" id="recent-note-time">Updated 2 hours ago</span>
+                        <h3 class="note-preview-title" id="recent-note-title"></h3>
+                        <p class="note-preview-body" id="recent-note-body"></p>
+                        <span class="note-preview-category" id="recent-note-category"></span>
                     </div>
                     <p class="note-preview-empty" id="recent-note-empty" hidden>No notes yet. Your first one will show
                         up here.</p>

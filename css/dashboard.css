@@ -219,57 +219,8 @@
     text-decoration: none;
 }
 
-
-
-
-/* ---------- quick add ---------- */
-
-.quick-add-form {
-    display: flex;
-    gap: 12px;
-}
-
-#quick-add-input {
-    flex: 1;
-    height: 44px;
-    padding: 0 16px;
-    border: 1px solid var(--dash-line);
-    border-radius: 7px;
-    background: var(--dash-surface);
-    color: var(--dash-ink);
-    font-size: 15px;
-    font-family: inherit;
-    box-sizing: border-box;
-}
-
-#quick-add-input::placeholder {
-    color: var(--dash-ink-soft);
-}
-
-#quick-add-input:focus-visible {
-    outline: 2px solid var(--dash-accent);
-    outline-offset: 1px;
-}
-
-.quick-add-btn {
-    height: 44px;
-    padding: 0 22px;
-    border: none;
-    border-radius: 7px;
-    background: var(--dash-accent);
-    color: #ffffff;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-}
-
-.quick-add-btn:hover {
-    opacity: 0.9;
-}
-
-.quick-add-btn:focus-visible {
-    outline: 2px solid var(--dash-accent);
-    outline-offset: 2px;
+.block-link:hover {
+    text-decoration: underline;
 }
 
 /* ---------- up next ---------- */
@@ -341,23 +292,38 @@
 
 /* ---------- recent note ---------- */
 
+.note-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
 .note-preview-title {
-    margin: 0 0 8px;
-    font-size: 15px;
+    margin: 0;
+    font-size: 18px;
     font-weight: 600;
     color: var(--dash-ink);
 }
 
 .note-preview-body {
-    margin: 0 0 12px;
-    font-size: 13px;
+    margin: 0;
+    font-size: 14px;
     line-height: 1.6;
     color: var(--dash-ink-soft);
-    max-width: 42ch;
+    max-width: none;
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+}
+
+.note-preview-category {
+    display: block;
+    width: 100%;
+    margin-top: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--dash-accent);
 }
 
 .note-preview-time {
@@ -369,13 +335,6 @@
     margin: 0;
     font-size: 13px;
     color: var(--dash-ink-soft);
-}
-
-.rail-block:last-of-type {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
 }
 
 /* ---------- responsive ---------- */
@@ -415,10 +374,7 @@
     }
 }
 
-
-.week-bar {
-    height: var(--bar-h, 10%);
-}
+/* ---------- weekly chart ---------- */
 
 .week-chart {
     display: flex;
@@ -455,6 +411,8 @@
     color: var(--dash-ink-soft);
 }
 
+/* ---------- start focus link ---------- */
+
 .start-focus-btn,
 .start-focus-btn:visited {
     flex-shrink: 0;
@@ -468,3 +426,6 @@
     height: auto;
 }
 
+.add-link {
+    text-decoration: none;
+}
