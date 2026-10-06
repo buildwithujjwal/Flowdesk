@@ -4,11 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flowdesk</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/nav.css">
+    <link rel="stylesheet" href="../css/settings.css">
     <script src="../js/auth-gaurd.js"></script>
-    <script src="../js/nav.js"></script>
+    <script src="../js/nav.js" defer></script>
+    <script src="../js/settings.js" defer></script>
 </head>
 <body>
     <div id="nav-placeholder"></div>
+
+    <div class="settings-layout">
+        <aside class="settings-menu">
+            <div class="settings-tabs" role="tablist">
+                <button class="tab-btn is-active" data-tab="account" role="tab" aria-selected="true" aria-controls="panel-account">Account</button>
+                <button class="tab-btn" data-tab="data" role="tab" aria-selected="false" aria-controls="panel-data">Reset</button>
+            </div>
+        </aside>
+
+        <main class="settings-main">
+
+            <!-- Account: change password -->
+            <section class="settings-panel is-active" id="panel-account" role="tabpanel">
+                <h2 class="panel-title">Account</h2>
+                <p class="panel-desc">Update the password used to log in to Flowdesk.</p>
+
+                <form id="password-form" class="settings-form">
+                    <label class="field">
+                        Current password
+                        <input type="password" id="current-password" autocomplete="current-password" required>
+                    </label>
+                    <label class="field">
+                        New password
+                        <input type="password" id="new-password" autocomplete="new-password" required>
+                    </label>
+                    <label class="field">
+                        Confirm new password
+                        <input type="password" id="confirm-password" autocomplete="new-password" required>
+                    </label>
+                    <!-- aria-live makes screen readers read out new messages -->
+                    <p id="password-error" class="field-error" aria-live="polite"></p>
+                    <button type="submit" class="save-btn" id="save-btn">Update password</button>
+                </form>
+            </section>
+
+            <!-- Data: reset -->
+            <section class="settings-panel" id="panel-data" role="tabpanel">
+                <h2 class="panel-title">Data Reset</h2>
+                <div class="danger-zone">
+                    <div class="toggle-text">
+                        <span class="toggle-label">Clear all data</span>
+                        <span class="toggle-sub">Permanently deletes your tasks, notes, timer settings, and focus history from this browser. This can't be undone.</span>
+                    </div>
+                    <button class="danger-btn" id="clear-data-btn">Clear all data</button>
+                </div>
+            </section>
+
+        </main>
+    </div>
 </body>
 </html>
