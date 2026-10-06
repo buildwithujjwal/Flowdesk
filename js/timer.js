@@ -6,25 +6,43 @@
 
 const username = JSON.parse(currentUser).username; // fetching the username by parsing currentUser from auth-guard.js
 
-const today = new Date().toISOString().split("T")[0]; // getting today's date
+let today = new Date().toLocaleDateString("en-CA"); // getting today's local date in YYYY-MM-DD format (en-CA gives this format)
 const storageKey = `pomodoro_${username}`; // naming key that will be stored in the localStorage different by username.
 
 // getting the user's timer details if exist in localStorage.
 let pomodoro = localStorage.getItem(storageKey);
 pomodoro = pomodoro ? JSON.parse(pomodoro) : null;
 
-// if user's timer does'nt exist in localStorage, manually created one with default values.
+// if user's timer doesn't exist in localStorage, manually created one with default values.
 if(!pomodoro) {
     pomodoro = {
-        settings: {focusDuration: 0, shortDuration: 0, longDuration: 0, roundsPerCycle: 1},
-        session: { mode: "focus", remainingSeconds: 0, isRunning: false, currentRound: 1 },
+        settings: {focusDuration: 25, shortDuration: 5, longDuration: 15, roundsPerCycle: 4},
+        session: { mode: "focus", remainingSeconds: 1500, isRunning: false, currentRound: 1 },
         history: {},
     };
 }
 
-// if history does'nt have today's date, so it will add today's object.
+// if history doesn't have today's date, so it will add today's object.
 if(!pomodoro.history[today]) {
     pomodoro.history[today] = {sessionsCompleted: 0, focusMinutes: 0 };
+}
+
+// end time of the running session is kept in sessionStorage, it stays while switching pages but is deleted when the tab is closed.
+const endTimeKey = `pomodoro_endTime_${username}`;
+let endTime = Number(sessionStorage.getItem(endTimeKey));
+let finishedWhileAway = false; // true if the session ended while user was on another page
+
+// if timer was running when user left this page, continue it from the time left.
+if (pomodoro.session.isRunning && endTime) {
+    let secondsLeft = Math.round((endTime - Date.now()) / 1000);
+
+    if (secondsLeft > 0) pomodoro.session.remainingSeconds = secondsLeft;
+    else finishedWhileAway = true;
+}
+
+// no end time means the tab was closed (or timer was paused), so the timer starts as paused.
+else {
+    pomodoro.session.isRunning = false;
 }
 
 
@@ -46,6 +64,7 @@ const cycleDots = document.getElementById("cycle-dots");
 const startPauseBtn = document.getElementById("start-pause-btn");
 const resetBtn = document.getElementById("reset-btn");
 const skipBtn = document.getElementById("skip-btn");
+const restartCycleBtn = document.getElementById("restart-cycle-btn");
 
 // Wraps both sides
 const timerLayout = document.querySelector(".timer-layout");
@@ -54,11 +73,11 @@ const timerLayout = document.querySelector(".timer-layout");
 const sessionOverlay = document.getElementById("session-overlay");
 const overlayMessage = document.getElementById("overlay-message");
 
-// Worker Thread 
+// Worker Thread
 const timerWorker = new Worker("../js/timer-worker.js"); // Creating a new worker thread.
 
 // Audio Setup
-const audioCtx = new AudioContext();
+let audioCtx = null; // created on the first click, because browsers block sound before the user clicks something
 let alarmInterval = null;
 let activeNotification = null;
 
@@ -107,6 +126,14 @@ function advanceSession() {
 // ---------------- Save Function --------------------
 function savePomodoro() {
     localStorage.setItem(storageKey, JSON.stringify(pomodoro)); // saving pomodoro timer details in the storage key of user.
+
+    // if running, save when the session will end (so it can continue on other pages), otherwise remove it.
+    if (pomodoro.session.isRunning) {
+        sessionStorage.setItem(endTimeKey, Date.now() + pomodoro.session.remainingSeconds * 1000);
+    }
+    else {
+        sessionStorage.removeItem(endTimeKey);
+    }
 }
 
 
@@ -120,14 +147,14 @@ function renderTimer() {
 
     // making current mode active so that it will appear on the timer.
     modeButtons.forEach((btn) => {
-        if (btn.dataset.mode === pomodoro.session.mode)  btn.classList.add("is-active");
+        if (btn.dataset.mode === pomodoro.session.mode) btn.classList.add("is-active");
         else btn.classList.remove("is-active");
     })
 
     // Render the mode label (Focus session OR Short break OR Long break)
-    if(pomodoro.session.mode == "focus") modeLabel.textContent = "Focus session";
+    if(pomodoro.session.mode === "focus") modeLabel.textContent = "Focus session";
     else if (pomodoro.session.mode === "short") modeLabel.textContent = "Short break";
-    else modeLabel.textContent = "Long Break";
+    else modeLabel.textContent = "Long break";
 
     let mins = Math.floor(pomodoro.session.remainingSeconds / 60); // Calculating minutes from the remaining time.
     let secs = pomodoro.session.remainingSeconds % 60; // Calculating seconds from the remaining time.
@@ -179,33 +206,33 @@ function renderTimer() {
 // Render the history stats of the user.
 function renderHistory() {
 
-    // sort the hostory array on the basis of date backward.
+    // sort the history array on the basis of date backward.
     let dates = Object.keys(pomodoro.history).sort((a, b) => b.localeCompare(a));
 
     // build and render the html for every stat in the history array.
     historyList.innerHTML = `
         ${dates
-          .map((date) => {
-            const entry = pomodoro.history[date];
-            return `
-                <li class="history-item">
-                    <div class="history-info">
-                        <div>
-                            <h3>${date}</h3>
-                            <p>${entry.sessionsCompleted} sessions · ${entry.focusMinutes}m focus</p>
+            .map((date) => {
+                const entry = pomodoro.history[date];
+                return `
+                    <li class="history-item">
+                        <div class="history-info">
+                            <div>
+                                <h3>${date}</h3>
+                                <p>${entry.sessionsCompleted} sessions · ${entry.focusMinutes}m focus</p>
+                            </div>
                         </div>
-                    </div>
-                </li>
-            `;
-          })
-          .join("")}
+                    </li>
+                `;
+            })
+            .join("")}
     `;
 }
 
 
 // ---------------------------------------- Web Worker -------------------------------------
 
-// Recieve the message send by the worker thread (After every 1 sec)
+// Receive the message sent by the worker thread (After every 1 sec)
 timerWorker.onmessage = function (event) {   // event is object of {type, remaining};
 
     // tick means Remaining time is not 0.
@@ -216,36 +243,48 @@ timerWorker.onmessage = function (event) {   // event is object of {type, remain
 
     // done means Remaining time is 0.
     if (event.data.type === "done") {
-        
-        let wasFocus = pomodoro.session.mode === "focus"; // weather currentSession was focus sessionor not.
-
-        // if currentSession was focus session, increase the today's stats in histoy.
-        if(wasFocus) {
-            pomodoro.history[today].sessionsCompleted++;
-            pomodoro.history[today].focusMinutes += pomodoro.settings.focusDuration;
-        }
-
-        // advances the session to next and stop running for now.
-        advanceSession();
-        pomodoro.session.isRunning = false;
-
-        // save each detail and render the page.
-        savePomodoro();
-        renderTimer();
-        renderHistory();
-
-        // show the message in between the sessions overlay.
-        let message = wasFocus ? "Break time!" : "Back to work!";
-        showSessionOverlay(message);
+        finishSession();
     }
 };
+
+// runs when a session ends (from the worker, or when it ended while user was on another page).
+function finishSession() {
+
+    let wasFocus = pomodoro.session.mode === "focus"; // whether currentSession was focus session or not.
+
+    // page can be open past midnight, so get today's date again and add it to history if not there.
+    today = new Date().toLocaleDateString("en-CA");
+    if(!pomodoro.history[today]) {
+        pomodoro.history[today] = {sessionsCompleted: 0, focusMinutes: 0 };
+    }
+
+    // if currentSession was focus session, increase the today's stats in history.
+    if(wasFocus) {
+        pomodoro.history[today].sessionsCompleted++;
+        pomodoro.history[today].focusMinutes += pomodoro.settings.focusDuration;
+    }
+
+    // advances the session to next and stop running for now.
+    advanceSession();
+    pomodoro.session.isRunning = false;
+
+    // save each detail and render the page.
+    savePomodoro();
+    renderTimer();
+    renderHistory();
+
+    // show the message in between the sessions overlay.
+    let message = wasFocus ? "Break time!" : "Back to work!";
+    showSessionOverlay(message);
+}
 
 
 // --------------------------- Notification/overlay/sound functions ---------------------------------
 
 // return a notification object only if permission is granted by the user.
 function showPersistentNotification(message) {
-    if (Notification.permission === "granted") {
+    // some browsers don't have Notification at all, so check it first.
+    if ("Notification" in window && Notification.permission === "granted") {
         activeNotification = new Notification("Flowdesk", {
             body: message,                   // notification message.
             tag: "pomodoro-session",         // one notification per tag, if another made previous dismissed.
@@ -258,14 +297,16 @@ function showPersistentNotification(message) {
 function showSessionOverlay(message) {
     overlayMessage.textContent = message;           // shows the message on the overlay screen
     sessionOverlay.classList.add("is-visible");     // make display to flex of overlay
+    sessionOverlay.focus();                         // move focus to overlay so screen readers read it and Enter doesn't press the focused button
 
     // play the alarm beep after every 2 second.
-    playAlarmSound(); 
+    playAlarmSound();
+    clearInterval(alarmInterval); // clear old interval if any, otherwise it will keep beeping forever
     alarmInterval = setInterval(() => {
         playAlarmSound();
     }, 2000);
 
-    showPersistentNotification(message);          // shows persistent notification on the notification corner. 
+    showPersistentNotification(message);          // shows persistent notification on the notification corner.
 }
 
 // make screen clear
@@ -274,7 +315,7 @@ function hideSessionOverlay() {
     sessionOverlay.classList.remove("is-visible");   // make display to none of overlay
 
     // stops and delete the alarmInterval.
-    clearInterval(alarmInterval); 
+    clearInterval(alarmInterval);
     alarmInterval = null;
 
     // close and delete the notification.
@@ -293,10 +334,12 @@ function hideSessionOverlay() {
 
 // play beep sound at the time of blur screen
 function playAlarmSound() {
+    if (!audioCtx) return; // no click happened yet, so no sound allowed
+
     let oscillator = audioCtx.createOscillator();
     let gainNode = audioCtx.createGain();
 
-    gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);             
+    gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
     gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
 
     oscillator.frequency.value = 880;
@@ -322,8 +365,9 @@ startPauseBtn.addEventListener("click", () => {
     }
 
     else {
-        if (Notification.permission === "granted") {
-            Notification.requestPermission();       // send notification if permission granted.
+        // ask for notification permission only if user has not answered yet (and browser supports it).
+        if ("Notification" in window && Notification.permission === "default") {
+            Notification.requestPermission();
         }
 
         // send the worker thread "start" and starts running.
@@ -365,10 +409,24 @@ skipBtn.addEventListener("click", () => {
     renderTimer();
 })
 
+// handle the restart from round 1 button if clicked
+restartCycleBtn.addEventListener("click", () => {
+
+    timerWorker.postMessage({ type: "stop" });
+
+    pomodoro.session.mode = "focus";
+    pomodoro.session.currentRound = 1;
+    pomodoro.session.remainingSeconds = getCurrentModeDuration();
+    pomodoro.session.isRunning = false;
+
+    savePomodoro();
+    renderTimer();
+});
+
 // handle the mode buttons in mode navbar if clicked.
 modeButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
-        
+
         timerWorker.postMessage({ type: "stop" });  // tell the worker thread to stop.
 
         // change the session details as per the selected mode.
@@ -376,7 +434,7 @@ modeButtons.forEach((btn) => {
         pomodoro.session.remainingSeconds = getCurrentModeDuration();
         pomodoro.session.isRunning = false;
 
-        // svae and render.
+        // save and render.
         savePomodoro();
         renderTimer();
     })
@@ -388,15 +446,26 @@ fields.forEach((field) => {
         let fieldId = field.id;
         let value = Number(field.value);
 
-        if (field.value === "" || isNaN(value) || value <= 0) return;   // for bad input cases, return;
+        // for bad input cases (empty, decimal, or outside min/max of the input), return;
+        if (field.value === "" || !Number.isInteger(value) || value < Number(field.min) || value > Number(field.max)) return;
 
         pomodoro.settings[fieldId] = value;  // setting the value in storage
 
-        // if current field is current mode, then also set the reaminingSeconds in storage.
-        if(fieldId === pomodoro.session.mode + "Duration") {
-            pomodoro.session.remainingSeconds = Number(field.value) * 60;
+        // if rounds are made less than the current round, bring current round down too (otherwise it shows "Round 4 of 2").
+        if(fieldId === "roundsPerCycle" && pomodoro.session.currentRound > value) {
+            pomodoro.session.currentRound = value;
         }
- 
+
+        // if current field is current mode, then also set the remainingSeconds in storage.
+        if(fieldId === pomodoro.session.mode + "Duration") {
+            pomodoro.session.remainingSeconds = value * 60;
+
+            // if timer is running, restart the worker with new time, otherwise worker keeps counting the old time.
+            if(pomodoro.session.isRunning) {
+                timerWorker.postMessage({ type: "start", seconds: pomodoro.session.remainingSeconds });
+            }
+        }
+
         // save and render.
         savePomodoro();
         renderTimer();
@@ -404,22 +473,60 @@ fields.forEach((field) => {
 })
 
 // clear the overlaying div by pressing any key except some.
-document.addEventListener("keydown", (event) => {    
+document.addEventListener("keydown", (event) => {
     if (["Alt", "Control", "Meta", "Shift"].includes(event.key)) return;  // these keys will not work.
     if (!document.hasFocus()) return; // work only if page is open.
 
     // make the display to none of overlay div
     if (sessionOverlay.classList.contains("is-visible")) {
+        event.preventDefault(); // so Enter/Space doesn't also click the focused button (that would pause the timer again)
         hideSessionOverlay();
     }
 });
 
+// clear the overlay by clicking on it too (for phones, there is no keyboard)
+sessionOverlay.addEventListener("click", hideSessionOverlay);
+
+// save the time left when leaving the page (switching page or closing tab), so it shows the right time when timer page opens again.
+// only localStorage here, the end time in sessionStorage is already correct.
+window.addEventListener("pagehide", () => {
+    localStorage.setItem(storageKey, JSON.stringify(pomodoro));
+});
+
+// create the audio on the first click anywhere on the page (once: true removes this listener after first click)
+document.addEventListener("click", () => {
+    audioCtx = new AudioContext();
+}, { once: true });
+
 
 // ------------------ Initial render calls ----------------------
+
+// show the saved durations in the inputs (otherwise inputs show the html default values)
+fields.forEach((field) => {
+    field.value = pomodoro.settings[field.id];
+});
 
 savePomodoro();
 renderTimer();
 renderHistory();
+
+// session ended while user was on another page, so finish it now and show the overlay.
+if (finishedWhileAway) {
+    finishSession();
+
+    // user already saw the alert on the other page (nav.js) and clicked it, so start the next session directly.
+    if (sessionStorage.getItem(`pomodoro_continue_${username}`)) {
+        hideSessionOverlay();
+    }
+}
+
+// timer was running before switching pages, so start the worker again with the time left.
+else if (pomodoro.session.isRunning) {
+    timerWorker.postMessage({ type: "start", seconds: pomodoro.session.remainingSeconds });
+}
+
+// remove it every time, so an old one doesn't skip the overlay next time.
+sessionStorage.removeItem(`pomodoro_continue_${username}`);
 
 
 // ------------------------------------------------ end ----------------------------------------------------------

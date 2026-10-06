@@ -2,50 +2,64 @@
     --timer-bg: #ffffff;
     --timer-sidebar-bg: #faf9f7;
     --timer-text: #444444;
-    --timer-text-muted: #8a8a86;
+    --timer-text-muted: #696965;
     --timer-border: #e5e5e5;
     --timer-input-bg: #ffffff;
     --timer-hover: #f0efed;
     --timer-track: #ece9e4;
+    --timer-btn-text: #ffffff;
 
     /* accent shifts per mode; focus is the default */
     --timer-accent: #2e4374;
     --timer-accent-soft: #e2e6f0;
+    --timer-accent-btn: #2e4374; /* start button bg, separate so dark mode can make it darker for white text */
 
     display: flex;
     width: 100%;
-    min-height: calc(100vh - 60px);
+    /* fill the space under the nav and scroll inside it (body is a flex column in nav.css) */
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
     background: var(--timer-bg);
 }
 
-.timer-layout[data-mode="short"],
 .timer-layout[data-mode="short"] {
-    --timer-accent: #3c7268;
+    --timer-accent: #366b61;
     --timer-accent-soft: #e0e9e6;
+    --timer-accent-btn: #366b61;
 }
 
 .timer-layout[data-mode="long"] {
-    --timer-accent: #5b4a8a; /* pick whatever color */
+    --timer-accent: #5b4a8a;
     --timer-accent-soft: #e7e2f0;
+    --timer-accent-btn: #5b4a8a;
 }
 
 [data-theme="dark"] .timer-layout {
-  --timer-bg: #15151a;
-  --timer-sidebar-bg: #1d1d23;
-  --timer-text: #e4e4e7;
-  --timer-text-muted: #8a8a92;
-  --timer-border: #2d2d35;
-  --timer-input-bg: #1d1d23;
-  --timer-hover: #26262e;
-  --timer-track: #2d2d35;
-  --timer-accent: #5b7ad4;
-  --timer-accent-soft: #232a3d;
+    --timer-bg: #15151a;
+    --timer-sidebar-bg: #1d1d23;
+    --timer-text: #e4e4e7;
+    --timer-text-muted: #9a9aa2;
+    --timer-border: #2d2d35;
+    --timer-input-bg: #1d1d23;
+    --timer-hover: #26262e;
+    --timer-track: #2d2d35;
+    --timer-btn-text: #ffffff;
+    --timer-accent: #7f9ae2;
+    --timer-accent-soft: #232a3d;
+    --timer-accent-btn: #4763bb;
 }
 
-[data-theme="dark"] .timer-layout[data-mode="short"],
+[data-theme="dark"] .timer-layout[data-mode="short"] {
+    --timer-accent: #5fb3a3;
+    --timer-accent-soft: #1d2e2a;
+    --timer-accent-btn: #2f7a6d;
+}
+
 [data-theme="dark"] .timer-layout[data-mode="long"] {
-  --timer-accent: #4a9688;
-  --timer-accent-soft: #1d2e2a;
+    --timer-accent: #a594e0;
+    --timer-accent-soft: #2a2438;
+    --timer-accent-btn: #6a55a8;
 }
 
 /* ---------- sidebar ---------- */
@@ -55,7 +69,7 @@
     min-width: 300px;
     padding: 28px 20px;
     border-right: 1px solid var(--timer-border);
-    background: var(--timer-sidebar-bg) !important;
+    background: var(--timer-sidebar-bg);
     box-sizing: border-box;
 }
 
@@ -95,6 +109,15 @@
 
 .mode-btn:hover {
     background: var(--timer-hover);
+}
+
+/* visible ring for keyboard users */
+.mode-btn:focus-visible,
+.control-btn:focus-visible,
+.restart-cycle-link:focus-visible,
+.duration-field input:focus-visible {
+    outline: 2px solid var(--timer-accent);
+    outline-offset: 2px;
 }
 
 .mode-btn.is-active {
@@ -149,6 +172,39 @@
     color: var(--timer-text);
     font-size: 14px;
     box-sizing: border-box;
+}
+
+.timer-history {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-height: 260px;
+    overflow-y: auto;
+}
+
+.history-item {
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--timer-border);
+}
+
+.history-item:last-child {
+    border-bottom: none;
+}
+
+.history-info h3 {
+    margin: 0 0 4px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--timer-text);
+}
+
+.history-info p {
+    margin: 0;
+    font-size: 12px;
+    color: var(--timer-text-muted);
 }
 
 /* ---------- main ---------- */
@@ -241,8 +297,8 @@
 .primary-btn {
     min-width: 120px;
     border: none;
-    background: var(--timer-accent);
-    color: #ffffff;
+    background: var(--timer-accent-btn);
+    color: var(--timer-btn-text);
     font-weight: 500;
 }
 
@@ -305,18 +361,33 @@
 
 /* overlay */
 
+/* overlay is outside .timer-layout, so it has its own variables */
 .session-overlay {
+    --overlay-bg: rgba(0, 0, 0, 0.6);
+    --overlay-text: #ffffff;
+
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.6);
+    background: var(--overlay-bg);
     backdrop-filter: blur(8px);
     z-index: 999;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: #ffffff;
+    color: var(--overlay-text);
     text-align: center;
+    cursor: pointer;
+}
+
+[data-theme="dark"] .session-overlay {
+    --overlay-bg: rgba(0, 0, 0, 0.7);
+    --overlay-text: #ffffff;
+}
+
+/* overlay gets focus from JS when it opens, no need to show a ring around the whole screen */
+.session-overlay:focus {
+    outline: none;
 }
 
 .session-overlay.is-visible {
@@ -332,4 +403,18 @@
 .overlay-hint {
     font-size: 16px;
     opacity: 0.8;
+}
+
+.restart-cycle-link {
+    margin-top: 14px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--timer-text-muted);
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.restart-cycle-link:hover {
+    color: var(--timer-text);
 }

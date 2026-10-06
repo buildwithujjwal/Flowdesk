@@ -6,9 +6,20 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
+  overflow: hidden;
 }
 
-nav {
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+#nav-placeholder {
+  flex-shrink: 0;
+}
+
+/* only the top navbar, so <nav> tags inside pages don't pick up these styles */
+#nav-placeholder nav {
   --nav-bg: #222222;
   --nav-text: #ffffff;
   --nav-button: #444444;
@@ -21,14 +32,14 @@ nav {
   background: var(--nav-bg);
 }
 
-[data-theme="dark"] nav {
+[data-theme="dark"] #nav-placeholder nav {
   --nav-bg: #15151a;
   --nav-text: #e4e4e7;
   --nav-button: #26262e;
   --nav-button-hover: #35353f;
 }
 
-nav ul {
+#nav-placeholder nav ul {
   list-style: none;
   display: flex;
   gap: 1.5rem;
@@ -36,17 +47,17 @@ nav ul {
   padding: 0;
 }
 
-nav a {
+#nav-placeholder nav a {
   color: var(--nav-text);
   text-decoration: none;
   font-size: 0.95rem;
 }
 
-nav a:hover {
+#nav-placeholder nav a:hover {
   text-decoration: underline;
 }
 
-nav button {
+#nav-placeholder nav button {
   margin-left: 0.75rem;
   padding: 0.4rem 0.8rem;
   border: none;
@@ -56,8 +67,49 @@ nav button {
   cursor: pointer;
 }
 
-nav button:hover {
+#nav-placeholder nav button:hover {
   background: var(--nav-button-hover);
+}
+
+/* pomodoro alert on other pages (made by nav.js), same look as the timer page overlay */
+.nav-timer-overlay {
+  --overlay-bg: rgba(0, 0, 0, 0.6);
+  --overlay-text: #ffffff;
+
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--overlay-bg);
+  backdrop-filter: blur(8px);
+  color: var(--overlay-text);
+  text-align: center;
+  cursor: pointer;
+}
+
+[data-theme="dark"] .nav-timer-overlay {
+  --overlay-bg: rgba(0, 0, 0, 0.7);
+  --overlay-text: #ffffff;
+}
+
+/* overlay gets focus from JS, no need to show a ring around the whole screen */
+.nav-timer-overlay:focus {
+  outline: none;
+}
+
+.nav-overlay-message {
+  margin: 0 0 12px;
+  font-size: 32px;
+  font-weight: 600;
+}
+
+.nav-overlay-hint {
+  margin: 0;
+  font-size: 16px;
+  opacity: 0.8;
 }
 
 .error {
