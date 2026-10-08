@@ -7,10 +7,15 @@
     --tasks-hover: #f0efed;
     --tasks-button: #333333;
     --tasks-button-text: #ffffff;
+    --tasks-error: #b3412e;
+    --tasks-shadow: rgba(0, 0, 0, 0.06);
 
     display: flex;
     width: 100%;
-    min-height: calc(100vh - 60px);
+    /* fill the space under the nav and scroll inside it (body is a flex column in nav.css) */
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
     background: var(--tasks-bg);
 }
 
@@ -23,6 +28,8 @@
   --tasks-hover: #26262e;
   --tasks-button: #e4e4e7;
   --tasks-button-text: #15151a;
+  --tasks-error: #e2634a;
+  --tasks-shadow: rgba(0, 0, 0, 0.3);
 }
 
 .tasks-menu {
@@ -71,7 +78,8 @@
     cursor: pointer;
 }
 
-.tasks-filters button:hover {
+.tasks-filters button:hover,
+.tasks-filters button.active {
     background: var(--tasks-hover);
 }
 
@@ -95,7 +103,7 @@
     border: 1px solid var(--tasks-border);
     border-radius: 12px;
     background: var(--tasks-input-bg);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 2px 8px var(--tasks-shadow);
     overflow: hidden;
 }
 
@@ -201,6 +209,20 @@
     font-size: 13px;
 }
 
+/* done tasks get a line through them */
+.task-item.completed h3 {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+/* shown in the list when no task matches */
+.no-tasks {
+    list-style: none;
+    font-size: 0.85rem;
+    color: var(--tasks-text);
+    opacity: 0.5;
+}
+
 .task-actions {
     display: flex;
     gap: 8px;
@@ -220,7 +242,7 @@
 }
 
 #error {
-    color: red;
+    color: var(--tasks-error); /* was plain red, now it changes with dark mode too */
     font-size: 0.8rem;
     min-height: 16px;
     margin: 0 14px 10px;  /* matches the button's left margin so it aligns */
