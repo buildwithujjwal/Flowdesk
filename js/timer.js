@@ -219,7 +219,7 @@ function renderHistory() {
                         <div class="history-info">
                             <div>
                                 <h3>${date}</h3>
-                                <p>${entry.sessionsCompleted} sessions · ${entry.focusMinutes}m focus</p>
+                                <p>${entry.sessionsCompleted} ${entry.sessionsCompleted === 1 ? "session" : "sessions"} · ${entry.focusMinutes}m focus</p>
                             </div>
                         </div>
                     </li>

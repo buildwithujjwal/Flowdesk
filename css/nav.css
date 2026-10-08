@@ -112,10 +112,6 @@ body {
   opacity: 0.8;
 }
 
-.error {
-  color: red;
-}
-
 * {
   box-sizing: border-box;
   font-family: system-ui, sans-serif;

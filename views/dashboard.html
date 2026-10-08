@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flowdesk</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏳</text></svg>"> <!-- small icon in the tab, also stops the favicon.ico 404 error -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -40,7 +41,7 @@
                         </div>
                     </div>
                     <div class="weather-fallback" id="weather-fallback" hidden>
-                        <p class="weather-fallback-text">Enable location for weather.</p>
+                        <p class="weather-fallback-text" id="weather-fallback-text">Enable location for weather.</p>
                         <button class="weather-retry-btn" id="weather-retry-btn">Allow location</button>
                     </div>
                 </div>
@@ -70,7 +71,7 @@
                 <section class="dash-block">
                     <div class="block-head">
                         <h2 class="block-title">Upcoming Tasks</h2>
-                        <a href="todo.html" class="block-link">View all</a>
+                        <a href="tasks.html" class="block-link">View all</a>
                     </div>
                     <ul class="preview-list" id="upcoming-tasks-list">
                         <li class="preview-item">
@@ -97,7 +98,7 @@
                         <span class="rail-stat-label">Active tasks</span>
                     </div>
                     <div class="rail-stat-row">
-                        <span class="rail-stat-number" id="stat-notes">8</span>
+                        <span class="rail-stat-number" id="stat-notes"></span>
                         <span class="rail-stat-label">Total notes</span>
                     </div>
                 </section>

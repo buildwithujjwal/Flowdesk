@@ -101,6 +101,7 @@ clearDataBtn.addEventListener("click", () => {
 
     // Remove current user's Pomodoro settings and focus history
     localStorage.removeItem(`pomodoro_${username}`);
+    sessionStorage.removeItem(`pomodoro_endTime_${username}`); // timer data is gone, so the running timer's end time should go too
 
     location.reload();
 });

@@ -275,6 +275,15 @@ a {
   background: #d0d0d5;
 }
 
+/* the dark button rule above was giving the moon/sun toggle a light box, keep it see-through */
+[data-theme="dark"] .auth-topbar button {
+  background: transparent;
+}
+
+[data-theme="dark"] .auth-topbar button:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
 [data-theme="dark"] a {
   color: #e4e4e7;
 }

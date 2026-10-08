@@ -1,5 +1,15 @@
 // -------------------------------------------------login page------------------------------------------------
 
+// if the user is already logged in, no need to login again, go straight to the dashboard
+// same check as auth-gaurd.js, so a broken session still stays on this page
+try {
+    if (JSON.parse(sessionStorage.getItem("currentUser")).username) {
+        window.location.replace("dashboard.html");
+    }
+} catch (error) {
+    // no session or a broken one, so stay here and show the login
+}
+
 // show the auth forms when "Get Started" is clicked
 const getStartedBtn = document.getElementById("get-started-btn");
 getStartedBtn.addEventListener("click", () => {
@@ -54,7 +64,13 @@ loginButton.addEventListener("click", (event) => {
     // checks for username and its password
     let matchedUser = users.find(user => user.username === username);
 
-    if (!matchedUser) {
+    if (!username) {
+      error = "username cannot be empty";
+    }
+    else if (!password) {
+      error = "password cannot be empty";
+    }
+    else if (!matchedUser) {
       error = "username does not exists";
     } 
     else if (matchedUser.password !== password) {
@@ -105,8 +121,8 @@ registerButton.addEventListener("click", (event) => {
         localStorage.setItem("users", JSON.stringify(users));
 
         // create a session for the user
-        let loggedinAt = Date.now();
-        sessionStorage.setItem("currentUser", JSON.stringify({username, loggedinAt}));
+        let userLoggedInAt = Date.now(); // same key name as login, so the session always looks the same
+        sessionStorage.setItem("currentUser", JSON.stringify({username, userLoggedInAt}));
 
         window.location.href = "dashboard.html";
     }
