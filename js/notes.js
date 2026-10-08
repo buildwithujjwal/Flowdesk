@@ -3,7 +3,7 @@
 let notes = localStorage.getItem("notes"); // fetch notes array from localStorage
 notes = notes ? JSON.parse(notes) : []; // if not exist give an empty array
 
-const username = JSON.parse(currentUser).username; // currentUser already been fetched in auth-guard.js.
+const username = JSON.parse(currentUser).username; // currentUser already been fetched in auth-gaurd.js.
 
 
 // -----------------------------------------------NoteEditor-----------------------------------------------------
@@ -11,11 +11,51 @@ const username = JSON.parse(currentUser).username; // currentUser already been f
 const noteEditor = document.getElementById("note-editor");
 const newNote = document.getElementById("new-note-btn"); // New Note Button
 
-let currentView = ""; //filter out Notes
+let currentView = "All Notes"; //filter out Notes, show all notes by default
+let selectedNoteId = null; // keeps track of which note is currently opened in the editor (declared up here because renderNotes uses it right away)
+let searchText = ""; // whatever is typed in the search box, used by renderNotes
+renderNotes(currentView); // show all the notes on the right side when the page opens
 renderCategories(); // render all the catagories in the starting itself on the left sidebar
+
+// --------------------------Unsaved Changes-------------------------------
+// checks if what is in the editor is different from what is saved
+function hasUnsavedChanges() {
+    if(noteEditor.style.display === "none") return false; // editor is closed, nothing to lose
+
+    const title = document.getElementById("note-title").value.trim();
+    const content = document.getElementById("note-content").innerHTML;
+    let category = noteCategorySelect.value;
+    if(category === "__new__") category = newCategoryInput.value.trim();
+
+    const note = notes.find((note) => note.id === selectedNoteId);
+    if(note) {
+        // editing an old note, compare with what was saved
+        return note.title !== title || note.content !== content || note.category !== category;
+    }
+
+    // a new note, anything typed counts as a change
+    const contentText = document.getElementById("note-content").textContent.trim();
+    return title !== "" || contentText !== "" || category !== "";
+}
+
+// asks before throwing away unsaved changes, returns true if it is ok to go on
+function okToLeaveNote() {
+    if(!hasUnsavedChanges()) return true;
+    return confirm("You have unsaved changes. Discard them?");
+}
+
+// browser shows its own "leave site?" popup if the user leaves the page (nav link, refresh, close tab)
+window.addEventListener("beforeunload", (event) => {
+    if(hasUnsavedChanges()) {
+        event.preventDefault();
+        event.returnValue = ""; // older browsers need this line too
+    }
+});
 
 // --------------------------New Note-------------------------------
 newNote.addEventListener("click", () => {
+    if(!okToLeaveNote()) return; // user wants to keep editing the current note
+
     document.getElementById("empty-state").style.display = "none"; // hide the empty state text
     noteEditor.style.display = "flex"; // show the noteEditor
 
@@ -23,6 +63,7 @@ newNote.addEventListener("click", () => {
     document.getElementById("note-title").value = "";
     document.getElementById("note-category").value = "";
     document.getElementById("note-content").innerHTML = "";
+    document.getElementById("error").innerHTML = ""; // clear any old error message
 
     selectedNoteId = null; // no note should be selected while creating a new one
     renderNotes(currentView); // render notes on the right side
@@ -53,22 +94,30 @@ const saveNoteBtn = document.getElementById("save-note-btn");
 saveNoteBtn.addEventListener("click", () => { // save button is clikked
 
     // fetched title, content and category the user filled and generate the keys that are going to save in notes array.
-    const id = crypto.randomUUID(); 
+    const existingNote = notes.find(
+    note => note.id === selectedNoteId &&
+            note.username === username
+    );
+
+    const id = existingNote ? existingNote.id : crypto.randomUUID();
+    const createdAt = existingNote ? existingNote.createdAt : Date.now(); 
     let title = document.getElementById("note-title").value.trim();
     let content = document.getElementById("note-content").innerHTML;
     let category = document.getElementById("note-category").value;
-    const createdAt = Date.now();
 
     // Handle all the possible errors. 
     let error = "";
     if(!title) error = "title can't be empty";
     
-    // title cant be same for two notes.
-    else if(    
+    // title cant be same for two notes (capital or small letters don't matter, so "DSA" and "dsa" are same).
+    else if(
         notes.find(
-            (note) => note.username === username && note.title === title && note.id !== selectedNoteId
+            (note) => note.username === username && note.title.toLowerCase() === title.toLowerCase() && note.id !== selectedNoteId
         )
     ) error = "title already exists";
+
+    // new category is selected but the name is left empty.
+    else if(noteCategorySelect.value === "__new__" && !newCategoryInput.value.trim()) error = "category name can't be empty";
     else{
 
         // set the manually made category
@@ -77,19 +126,32 @@ saveNoteBtn.addEventListener("click", () => { // save button is clikked
         }
 
         // if the user is updating, remove the previous entry and add as new.
-        if(selectedNoteId !== null) {
-            notes = notes.filter((note) => note.id !== selectedNoteId);
+        // work on a copy, so notes only changes if saving really works.
+        const updatedNotes = notes.filter((note) => note.id !== selectedNoteId);
+
+        // push the note into the copy and save it.
+        updatedNotes.push({id, username, title, content, category, createdAt});
+
+        // localStorage has a size limit (around 5MB), setItem throws an error if it is full
+        try {
+            localStorage.setItem("notes", JSON.stringify(updatedNotes));
+        } catch (err) {
+            document.getElementById("error").innerHTML = "storage is full, note couldn't be saved";
+            return; // stop here, so the note stays open in the editor and nothing is lost
         }
-        
-        // push the note into notes array.
-        notes.push({id, username, title, content, category, createdAt});
-        localStorage.setItem("notes", JSON.stringify(notes));
+        notes = updatedNotes; // saved for real, now update our list
+
+        // if we are inside a category and the note went to some other category, jump there so the note doesn't look gone
+        if(currentView !== "All Notes" && category !== currentView) {
+            currentView = category ? category : "All Notes";
+        }
 
         // reset all the inputs and options
         document.getElementById("note-title").value = "";
         document.getElementById("note-content").innerHTML = "";
         document.getElementById("note-category").value = "";
         newCategoryInput.value = "";
+        selectedNoteId = null; // un select the note, so its card is not highlighted anymore
 
         // hide editor and show text.
         noteEditor.style.display = "none";
@@ -105,6 +167,7 @@ saveNoteBtn.addEventListener("click", () => { // save button is clikked
 const deleteNoteBtn = document.getElementById("delete-note-btn");
 deleteNoteBtn.addEventListener("click", () => {
     if(!selectedNoteId) return;   // if no note id selected just return
+    if(!confirm("Delete this note? This can't be undone.")) return; // ask first, so one wrong click doesn't wipe a note
     deleteNote(selectedNoteId);   // call delete Note
 });
 
@@ -118,7 +181,7 @@ function deleteNote(id) {
 
     noteEditor.style.display = "none"; // hide the noteEditor
 
-    // hide and reset the input box.
+    // re-render so the deleted note and its category go away
     renderNotes(currentView);
     renderCategories();
 }
@@ -126,9 +189,12 @@ function deleteNote(id) {
 // ------------------------------Cross Button---------------------------------
 const crossEditorBtn = document.getElementById("close-editor-btn");
 crossEditorBtn.addEventListener("click", () => {                      // cross button is clicked
+    if(!okToLeaveNote()) return; // user wants to keep editing
+
     document.getElementById("empty-state").style.display = "flex";    // hide editor, show empty-state text
     noteEditor.style.display = "none";
     selectedNoteId = null; // un select the note
+    document.getElementById("error").innerHTML = ""; // clear any old error message
 
     renderNotes(currentView);
     renderCategories();
@@ -141,7 +207,7 @@ crossEditorBtn.addEventListener("click", () => {                      // cross b
 // -------------------------------Render Notes-------------------------------
 function renderNotes(currentView) {
 
-    document.getElementById("cards-title").innerHTML = currentView; // set the heading text as the current view name
+    document.getElementById("cards-title").textContent = currentView; // set the heading text as the current view name (textContent so a category name can't add html)
 
     let cardsGrid = document.getElementById("cards-grid");
     let userNotes = []; // this array will hold only the notes that should be shown
@@ -162,20 +228,34 @@ function renderNotes(currentView) {
         }
     }
 
+    // keep only the notes whose title has the searched text
+    if(searchText) {
+        userNotes = userNotes.filter((note) => note.title.toLowerCase().includes(searchText));
+    }
+
     // sort the notes so the newest one shows up first
     userNotes.sort((a, b) => {
         return b.createdAt - a.createdAt;
     })
 
+    // nothing to show, tell the user instead of leaving it blank
+    if(userNotes.length === 0) {
+        cardsGrid.innerHTML = `<p class="no-notes">No notes found</p>`;
+        return;
+    }
+
     // build the html for every note card and inject it into the grid
+    // preview is a div not a p, because the content has its own divs inside and a p can't hold them
+    // title and category go through escapeHTML so they show as plain text, not as html
+    // tabindex and role let keyboard users reach the card with Tab
     cardsGrid.innerHTML = `
         ${userNotes
             .map((note) => {
                 return `
-                    <div class="note-card ${note.id === selectedNoteId ? "active" : ""}" data-id="${note.id}">
-                        <h4>${note.title}</h4>  
-                        <p>${note.content}</p>
-                        <span class="note-category-tag">${note.category ? note.category : "No Category"}</span>
+                    <div class="note-card ${note.id === selectedNoteId ? "active" : ""}" data-id="${note.id}" tabindex="0" role="button">
+                        <h4>${escapeHTML(note.title)}</h4>
+                        <div class="note-preview">${note.content}</div>
+                        <span class="note-category-tag">${note.category ? escapeHTML(note.category) : "No Category"}</span>
                     </div>
                 `;
             })
@@ -183,8 +263,16 @@ function renderNotes(currentView) {
     `;
 };
 
+// turns < > & " ' into safe text, so a title or category can't add its own html (or code) to the page
+function escapeHTML(text) {
+    return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+}
 
-let selectedNoteId = null; // keeps track of which note is currently opened in the editor
 
 // -------------------------------Select Note-------------------------------
 const cardsGrid = document.getElementById("cards-grid");
@@ -195,6 +283,7 @@ cardsGrid.addEventListener("click", (event) => { // a note card is clikked
     const id = card.dataset.id; // get the id of the clicked card
     const note = notes.find((note) => note.id === id); // find the matching note from the notes array
     if (!note) return; // if no such note exist, stop here
+    if(!okToLeaveNote()) return; // user wants to keep editing the current note
 
     selectedNoteId = note.id; // mark this note as the selected one
 
@@ -204,6 +293,7 @@ cardsGrid.addEventListener("click", (event) => { // a note card is clikked
     // fill the editor fields with the selected note's data
     document.getElementById("note-title").value = note.title;
     document.getElementById("note-content").innerHTML = note.content;
+    document.getElementById("error").innerHTML = ""; // clear any old error message
 
     renderNotes(currentView);
     renderCategories();
@@ -230,12 +320,19 @@ function renderCategories() {
 
     uniqueCategories.sort((a, b) => a.localeCompare(b)); // sort the categories alphabetically
 
+    // if the category we are viewing has no notes left (last one deleted or moved), go back to All Notes
+    if(currentView !== "All Notes" && !uniqueCategories.includes(currentView)) {
+        currentView = "All Notes";
+        renderNotes(currentView);
+    }
+
     // render each category as a list item in the left sidebar
+    // escapeHTML so names with < or " don't break the html, tabindex and role so keyboard users can reach them
     const categoryList = document.getElementById("category-list");
     categoryList.innerHTML = `
         ${uniqueCategories
             .map((cg) => {
-                return `<li class="${cg === currentView ? "active" : ""}" data-category="${cg}">${cg}</li>`;
+                return `<li class="${cg === currentView ? "active" : ""}" data-category="${escapeHTML(cg)}" tabindex="0" role="button">${escapeHTML(cg)}</li>`;
             })
         .join("")}
     `;
@@ -244,7 +341,7 @@ function renderCategories() {
     const noteCategorySelect = document.getElementById("note-category");
     const dynamicOptions = uniqueCategories
         .map((cg) => {
-            return `<option value="${cg}">${cg}</option>`;
+            return `<option value="${escapeHTML(cg)}">${escapeHTML(cg)}</option>`;
         })
         .join("");
 
@@ -278,6 +375,71 @@ categoryList.addEventListener("click", (event) => { // a category in the sidebar
 });
 
 
-// search feature is left
-// the card grid size is dynamic but should be static
-// if possible, the resizing of editor, cardGrid and categories section.
+// ------------------------------Keyboard Support---------------------------
+// categories and cards are not real buttons, so let Enter or Space open them like a click
+function clickOnEnter(event) {
+    if(event.key === "Enter" || event.key === " ") {
+        event.preventDefault(); // stop space from scrolling the page
+        event.target.click(); // run the same code as a mouse click
+    }
+}
+categoryList.addEventListener("keydown", clickOnEnter);
+cardsGrid.addEventListener("keydown", clickOnEnter);
+
+
+// ------------------------------Search---------------------------------------
+const searchInput = document.getElementById("search-input");
+searchInput.addEventListener("input", () => { // user types in the search box
+    searchText = searchInput.value.trim().toLowerCase(); // small letters, so search doesn't care about capitals
+    renderNotes(currentView); // show only the matching notes
+});
+
+
+// ------------------------------Paste as Plain Text---------------------------
+// when something is pasted, keep only the plain text, so colors, fonts and images from websites don't come in
+const noteContent = document.getElementById("note-content");
+noteContent.addEventListener("paste", (event) => {
+    event.preventDefault(); // stop the normal paste
+    const text = event.clipboardData.getData("text/plain");
+    document.execCommand("insertText", false, text); // old command but still the simplest way, and ctrl+z still works
+});
+
+
+// ------------------------------Other Tabs-----------------------------------
+// if notes change in another tab, reload them here so saving in this tab doesn't wipe that tab's changes
+window.addEventListener("storage", (event) => {
+    if(event.key !== "notes") return; // some other key changed, not our problem
+
+    notes = JSON.parse(event.newValue) || []; // newValue is null if the key got removed
+    const chosenCategory = noteCategorySelect.value; // renderCategories rebuilds the dropdown, so remember what was picked
+    renderNotes(currentView);
+    renderCategories();
+    noteCategorySelect.value = chosenCategory;
+});
+
+
+
+
+// ------------------------------Resize Columns-------------------------------
+// drag the thin bars between the columns to make the sidebar or cards area wider or smaller
+document.querySelectorAll(".resizer").forEach((resizer) => {
+    resizer.addEventListener("pointerdown", (event) => {
+        event.preventDefault(); // stop text from getting selected while dragging
+
+        const column = document.querySelector(resizer.dataset.column); // the column this bar resizes
+        const direction = Number(resizer.dataset.direction); // 1 = dragging right makes it wider, -1 = dragging left makes it wider
+        const startX = event.clientX; // where the mouse was when the drag started
+        const startWidth = column.offsetWidth; // how wide the column was when the drag started
+
+        resizer.setPointerCapture(event.pointerId); // keep getting mouse moves even if the mouse leaves the thin bar
+
+        resizer.onpointermove = (moveEvent) => {
+            const newWidth = startWidth + (moveEvent.clientX - startX) * direction;
+            column.style.width = Math.min(450, Math.max(180, newWidth)) + "px"; // keep it between 180px and 450px
+        };
+
+        resizer.onpointerup = () => {
+            resizer.onpointermove = null; // drag is over, stop resizing
+        };
+    });
+});

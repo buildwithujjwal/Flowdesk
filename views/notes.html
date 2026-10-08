@@ -18,7 +18,7 @@
         <aside class="sidebar">
             <div class="sidebar-header">
                 <h2>Notes</h2>
-                <button id="new-note-btn">+</button>
+                <button id="new-note-btn" aria-label="New note">+</button>
             </div>
             <div class="notes-section">
                 <button id="all-notes-btn" class="section-label">All Notes</button>
@@ -28,34 +28,40 @@
                 <ul id="category-list"></ul>
             </div>
         </aside>
- 
+
+        <!-- drag bar to resize the sidebar -->
+        <div class="resizer" data-column=".sidebar" data-direction="1"></div>
+
         <main class="editor-area">
             <div class="empty-state" id="empty-state">
                 <p>Select a note or create a new one</p>
             </div>
             <div class="note-editor" id="note-editor" style="display:none;">
 
-                <input type="text" id="note-title" placeholder="Note Title">
-                <select id="note-category">
+                <input type="text" id="note-title" placeholder="Note Title" aria-label="Note title">
+                <select id="note-category" aria-label="Category">
                     <option value="">No Category</option>
                     <option value="__new__">+ Add New Category</option>
                 </select>
-                <input type="text" id="new-category-input" placeholder="New category name" style="display:none;">
+                <input type="text" id="new-category-input" placeholder="New category name" aria-label="New category name" style="display:none;">
 
-                <div id="note-content" contenteditable="true" placeholder="Start writing..."></div>
-                <p id="erorr"></p>
+                <div id="note-content" contenteditable="true" placeholder="Start writing..." role="textbox" aria-multiline="true" aria-label="Note content"></div>
+                <p id="error" role="alert"></p>
                 <div class="editor-actions">
                     <button id="save-note-btn">Save</button>
                     <button id="delete-note-btn">Delete</button>
-                    <button id="close-editor-btn">✕</button>
+                    <button id="close-editor-btn" aria-label="Close editor">✕</button>
                 </div>
             </div>
         </main>
- 
+
+        <!-- drag bar to resize the cards area (direction -1 because it sits on the right side) -->
+        <div class="resizer" data-column=".cards-area" data-direction="-1"></div>
+
         <section class="cards-area">
             <div class="cards-header">
                 <h3 id="cards-title">All Notes</h3>
-                <input type="text" id="search-input" placeholder="Search...">
+                <input type="text" id="search-input" placeholder="Search..." aria-label="Search notes by title">
             </div>
             <div class="cards-grid" id="cards-grid"></div>
         </section>
