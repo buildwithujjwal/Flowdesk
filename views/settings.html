@@ -16,6 +16,7 @@
 
     <div class="settings-layout">
         <aside class="settings-menu">
+            <p class="settings-menu-label">Settings</p>
             <div class="settings-tabs" role="tablist">
                 <button class="tab-btn is-active" data-tab="account" role="tab" aria-selected="true" aria-controls="panel-account">Account</button>
                 <button class="tab-btn" data-tab="data" role="tab" aria-selected="false" aria-controls="panel-data">Reset</button>
@@ -26,31 +27,41 @@
 
             <!-- Account: change password -->
             <section class="settings-panel is-active" id="panel-account" role="tabpanel">
-                <h2 class="panel-title">Account</h2>
-                <p class="panel-desc">Update the password used to log in to Flowdesk.</p>
+                <header class="panel-header">
+                    <h2 class="panel-title">Account</h2>
+                    <p class="panel-desc">Update the password used to log in to Flowdesk.</p>
+                </header>
 
-                <form id="password-form" class="settings-form">
-                    <label class="field">
-                        Current password
-                        <input type="password" id="current-password" autocomplete="current-password" required>
-                    </label>
-                    <label class="field">
-                        New password
-                        <input type="password" id="new-password" autocomplete="new-password" required>
-                    </label>
-                    <label class="field">
-                        Confirm new password
-                        <input type="password" id="confirm-password" autocomplete="new-password" required>
-                    </label>
-                    <!-- aria-live makes screen readers read out new messages -->
-                    <p id="password-error" class="field-error" aria-live="polite"></p>
-                    <button type="submit" class="save-btn" id="save-btn">Update password</button>
-                </form>
+                <div class="settings-card">
+                    <h3 class="card-title">Change password</h3>
+                    <form id="password-form" class="settings-form">
+                        <label class="field">
+                            <span class="field-label">Current password</span>
+                            <input type="password" id="current-password" autocomplete="current-password" required>
+                        </label>
+                        <label class="field">
+                            <span class="field-label">New password</span>
+                            <input type="password" id="new-password" autocomplete="new-password" required>
+                        </label>
+                        <label class="field">
+                            <span class="field-label">Confirm new password</span>
+                            <input type="password" id="confirm-password" autocomplete="new-password" required>
+                        </label>
+                        <!-- aria-live makes screen readers read out new messages -->
+                        <p id="password-error" class="field-error" aria-live="polite"></p>
+                        <button type="submit" class="save-btn" id="save-btn">Update password</button>
+                    </form>
+                </div>
             </section>
 
             <!-- Data: reset -->
             <section class="settings-panel" id="panel-data" role="tabpanel">
-                <h2 class="panel-title">Data Reset</h2>
+                <header class="panel-header">
+                    <h2 class="panel-title">Data Reset</h2>
+                    <p class="panel-desc">Remove your tasks, notes and timer data from this browser.</p>
+                </header>
+
+                <p class="danger-label">Danger zone</p>
                 <div class="danger-zone">
                     <div class="toggle-text">
                         <span class="toggle-label">Clear all data</span>

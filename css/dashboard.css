@@ -1,16 +1,22 @@
 .dash-layout {
-    --dash-ink: #181b22;
-    --dash-ink-soft: #565b66;
-    --dash-paper: #eff1f4;
+    --dash-ink: #18181b;
+    --dash-ink-soft: #52525b;
+    --dash-paper: #f4f4f5;
     --dash-surface: #ffffff;
-    --dash-line: #dee1e7;
-    --dash-accent: #2f4c6b;
-    --dash-accent-soft: #e4eaf1;
-    --dash-accent-warm: #b5652e;
-    --dash-hero-bg: #1b2430;
-    --dash-hero-text: #f3f1ea;
-    --dash-hero-accent: #d98e34;
-    --dash-hero-text-soft: rgba(243, 241, 234, 0.7);
+    --dash-line: #e4e4e7;
+    --dash-accent: #2563eb;
+    --dash-btn-bg: #18181b;
+    --dash-accent-soft: #ebebee;
+    --dash-on-accent: #ffffff;
+    --dash-hero-bg: #18181b;
+    --dash-hero-text: #f4f4f5;
+    --dash-hero-accent: #60a5fa;
+    --dash-hero-text-soft: rgba(244, 244, 245, 0.7);
+    --dash-hero-bg-end: #2e2e33;
+    --dash-hero-dots: rgba(255, 255, 255, 0.07);
+    --dash-hero-line: rgba(255, 255, 255, 0.14);
+    --dash-hero-shadow: rgba(0, 0, 0, 0.25);
+    --dash-accent-2: #60a5fa;
 
     display: flex;
     flex-direction: column;
@@ -19,10 +25,10 @@
     flex: 1;
     min-height: 0;
     overflow-y: auto;
-    padding: 48px 60px 60px;
+    padding: 40px 48px 56px;
     box-sizing: border-box;
     background: var(--dash-paper);
-    font-family: "Inter", system-ui, sans-serif;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
     color: var(--dash-ink);
 }
 
@@ -32,13 +38,25 @@
     --dash-paper: #15151a;
     --dash-surface: #1d1d23;
     --dash-line: #2d2d35;
-    --dash-accent: #5b7ad4;
-    --dash-accent-soft: #232a3d;
-    --dash-accent-warm: #e0a050;
-    --dash-hero-bg: #232a3d;
-    --dash-hero-text: #f3f1ea;
-    --dash-hero-accent: #e0a050;
-    --dash-hero-text-soft: rgba(243, 241, 234, 0.7);
+    --dash-accent: #60a5fa;
+    --dash-btn-bg: #e4e4e7;
+    --dash-accent-soft: #26262e;
+    --dash-on-accent: #15151a;
+    --dash-hero-bg: #1d1d23;
+    --dash-hero-text: #f4f4f5;
+    --dash-hero-accent: #60a5fa;
+    --dash-hero-text-soft: rgba(244, 244, 245, 0.7);
+    --dash-hero-bg-end: #2a2a31;
+    --dash-hero-dots: rgba(255, 255, 255, 0.05);
+    --dash-hero-line: rgba(255, 255, 255, 0.12);
+    --dash-hero-shadow: rgba(0, 0, 0, 0.45);
+    --dash-accent-2: #93c5fd;
+}
+
+/* js hides things with the "hidden" attribute, but display: flex was showing them again
+   (empty task rows and the weather box), so this makes hidden always win */
+.dash-layout [hidden] {
+    display: none !important;
 }
 
 /* ---------- masthead ---------- */
@@ -49,21 +67,20 @@
     justify-content: space-between;
     gap: 24px;
     padding-bottom: 24px;
-    margin-bottom: 40px;
+    margin-bottom: 32px;
     border-bottom: 1px solid var(--dash-line);
 }
 
 .masthead-greeting h1 {
     margin: 0 0 6px;
-    font-family: "Fraunces", Georgia, serif;
-    font-weight: 600;
-    font-size: 34px;
+    font-size: 42px;
+    font-weight: 700;
     color: var(--dash-ink);
 }
 
 .masthead-greeting p {
     margin: 0;
-    font-size: 14px;
+    font-size: 17px;
     color: var(--dash-ink-soft);
 }
 
@@ -74,10 +91,9 @@
 }
 
 .dash-clock {
-    font-family: "SF Mono", "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
-    font-variant-numeric: tabular-nums;
-    font-size: 22px;
-    font-weight: 400;
+    font-variant-numeric: tabular-nums; /* so the clock numbers don't jump around */
+    font-size: 28px;
+    font-weight: 600;
     color: var(--dash-ink);
 }
 
@@ -94,30 +110,30 @@
 }
 
 .weather-temp {
-    font-size: 22px;
-    font-weight: 400;
+    font-size: 28px;
+    font-weight: 600;
     color: var(--dash-ink);
 }
 
 .weather-info {
     display: flex;
     flex-direction: column;
-    gap: 1px;
+    gap: 2px;
 }
 
 .weather-condition {
-    font-size: 13px;
+    font-size: 16px;
     color: var(--dash-ink);
 }
 
 .weather-location {
-    font-size: 12px;
+    font-size: 15px;
     color: var(--dash-ink-soft);
 }
 
 .weather-fallback-text {
     margin: 0 0 8px;
-    font-size: 13px;
+    font-size: 15px;
     color: var(--dash-ink-soft);
 }
 
@@ -128,7 +144,7 @@
     border-radius: 6px;
     background: transparent;
     color: var(--dash-ink);
-    font-size: 13px;
+    font-size: 15px;
     cursor: pointer;
 }
 
@@ -138,33 +154,49 @@
 
 /* ---------- body layout ---------- */
 
+/* flex: 1 makes the grid take all the height left under the header,
+   and stretch makes both columns the same height, so there is no empty space at the bottom */
 .dash-body {
     flex: 1;
     display: grid;
-    grid-template-columns: 1.8fr 1fr;
-    gap: 28px;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
     align-items: stretch;
-    align-content: center;
 }
 
-.dash-main {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
+.dash-main,
 .dash-rail {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 24px;
+    min-width: 0; /* so long task names don't push the grid wider */
 }
 
 /* ---------- focus hero ---------- */
 
+/* the hero grows to fill the main column. dotted pattern on top of a dark blue gradient */
 .focus-hero {
-    padding: 36px 32px;
-    border-radius: 14px;
-    background: var(--dash-hero-bg);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 300px;
+    padding: 36px;
+    border-radius: 16px;
+    background:
+        radial-gradient(var(--dash-hero-dots) 1px, transparent 1px) 0 0 / 18px 18px,
+        linear-gradient(135deg, var(--dash-hero-bg), var(--dash-hero-bg-end));
+    box-shadow: 0 12px 30px var(--dash-hero-shadow);
+}
+
+/* margin-bottom: auto pushes the number down to the bottom of the hero */
+.focus-hero-eyebrow {
+    margin: 0 0 auto;
+    padding-bottom: 32px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--dash-hero-accent);
 }
 
 .focus-hero-stat {
@@ -175,21 +207,28 @@
 }
 
 .focus-hero-number {
-    font-family: "Fraunces", Georgia, serif;
-    font-size: 64px;
-    font-weight: 600;
+    font-size: 104px;
+    font-weight: 700;
     line-height: 1;
     color: var(--dash-hero-text);
 }
 
 .focus-hero-label {
-    font-size: 15px;
+    font-size: 20px;
     color: var(--dash-hero-accent);
 }
 
 .focus-hero-sub {
     margin: 0;
-    font-size: 14px;
+    font-size: 18px;
+    color: var(--dash-hero-text);
+}
+
+.focus-hero-note {
+    margin: 20px 0 0;
+    padding-top: 16px;
+    border-top: 1px solid var(--dash-hero-line);
+    font-size: 15px;
     color: var(--dash-hero-text-soft);
 }
 
@@ -199,7 +238,7 @@
 .rail-block {
     padding: 24px;
     border: 1px solid var(--dash-line);
-    border-radius: 12px;
+    border-radius: 10px;
     background: var(--dash-surface);
     box-sizing: border-box;
 }
@@ -208,18 +247,32 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 .block-title {
     margin: 0;
-    font-size: 15px;
+    font-size: 20px;
     font-weight: 600;
     color: var(--dash-ink);
 }
 
+/* colored bar in front of each section title (blue for tasks, light blue for notes) */
+.block-head .block-title,
+.quick-links .block-title {
+    padding-left: 12px;
+    border-left: 4px solid var(--dash-accent);
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.note-block .block-head .block-title {
+    border-left-color: var(--dash-accent-2);
+}
+
 .block-link {
-    font-size: 13px;
+    font-size: 16px;
     color: var(--dash-accent);
     text-decoration: none;
 }
@@ -228,12 +281,43 @@
     text-decoration: underline;
 }
 
-/* ---------- up next ---------- */
+/* ---------- start focus ---------- */
+
+.start-focus-block {
+    border-color: transparent;
+    background: var(--dash-accent-soft);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.start-focus-sub {
+    margin: 4px 0 0;
+    font-size: 16px;
+    color: var(--dash-ink-soft);
+}
+
+.start-focus-btn,
+.start-focus-btn:visited {
+    flex-shrink: 0;
+    padding: 10px 18px;
+    border-radius: 8px;
+    background: var(--dash-btn-bg);
+    color: var(--dash-on-accent);
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.start-focus-btn:hover {
+    background: var(--dash-accent);
+}
+
+/* ---------- upcoming tasks ---------- */
 
 .preview-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -242,56 +326,92 @@
 .preview-item {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 14px;
+    gap: 12px;
+    padding: 12px 0;
+    font-size: 17px;
     color: var(--dash-ink);
 }
 
+/* line between the two tasks */
+.preview-item + .preview-item {
+    border-top: 1px solid var(--dash-line);
+}
+
 .preview-dot {
-    width: 6px;
-    height: 6px;
-    min-width: 6px;
+    width: 8px;
+    height: 8px;
+    min-width: 8px;
     border-radius: 50%;
     background: var(--dash-accent);
 }
 
 .preview-text {
     flex: 1;
+    /* long task names get cut with "..." */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .preview-meta {
-    font-size: 12px;
+    font-size: 15px;
     color: var(--dash-ink-soft);
 }
 
 .preview-empty {
-    font-size: 13px;
+    padding: 12px 0;
+    font-size: 16px;
     color: var(--dash-ink-soft);
+}
+
+.add-link {
+    color: var(--dash-accent);
 }
 
 /* ---------- rail stats ---------- */
 
+/* two stats next to each other, each with a thick colored line on top */
 .rail-stats {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
 }
 
 .rail-stat-row {
     display: flex;
-    align-items: baseline;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 6px;
+    padding-top: 14px;
+    border-top: 4px solid var(--dash-accent);
 }
 
-.rail-stat-number {
-    font-family: "Fraunces", Georgia, serif;
-    font-size: 26px;
-    font-weight: 600;
-    color: var(--dash-ink);
+.stat-notes-row {
+    border-top-color: var(--dash-accent-2);
 }
 
 .rail-stat-label {
-    font-size: 13px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--dash-ink-soft);
+}
+
+.stat-symbol {
+    color: var(--dash-accent);
+}
+
+.stat-notes-row .stat-symbol {
+    color: var(--dash-accent-2);
+}
+
+.rail-stat-number {
+    font-size: 52px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--dash-ink);
+}
+
+.rail-stat-hint {
+    font-size: 14px;
     color: var(--dash-ink-soft);
 }
 
@@ -300,22 +420,22 @@
 .note-preview {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
 }
 
 .note-preview-title {
     margin: 0;
-    font-size: 18px;
+    font-size: 21px;
     font-weight: 600;
     color: var(--dash-ink);
 }
 
 .note-preview-body {
     margin: 0;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 1.6;
     color: var(--dash-ink-soft);
-    max-width: none;
+    /* show only 3 lines of the note */
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
@@ -323,36 +443,125 @@
 }
 
 .note-preview-category {
-    display: block;
-    width: 100%;
-    margin-top: 4px;
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 500;
     color: var(--dash-accent);
 }
 
-.note-preview-time {
-    font-size: 12px;
+.note-preview-empty {
+    margin: 0;
+    font-size: 16px;
     color: var(--dash-ink-soft);
 }
 
-.note-preview-empty {
-    margin: 0;
-    font-size: 13px;
+/* ---------- quick links ---------- */
+
+/* no card around this one, just a list with lines.
+   margin-top: auto sticks it to the bottom of the right column */
+.quick-links {
+    display: flex;
+    flex-direction: column;
+    margin-top: auto;
+}
+
+.quick-links .block-title {
+    margin-bottom: 8px;
+    border-left-color: var(--dash-ink-soft);
+}
+
+.quick-link {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--dash-line);
+    text-decoration: none;
+}
+
+.quick-link-name {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--dash-ink);
+}
+
+.quick-link-desc {
+    font-size: 15px;
     color: var(--dash-ink-soft);
+}
+
+.quick-link:hover .quick-link-name {
+    color: var(--dash-accent);
+}
+
+/* ---------- fit on one screen (no scrolling) ---------- */
+
+/* on normal desktop screens the whole dashboard fits in the window and the page doesn't scroll.
+   the grid row is locked to the height that is left, the hero takes whatever space remains
+   and the note card can shrink a bit if the screen is short.
+   small or very short screens skip this and scroll like before, so nothing gets cut off */
+@media (min-width: 901px) and (min-height: 700px) {
+    .dash-layout {
+        overflow: hidden;
+        padding: 28px 48px;
+    }
+
+    .dash-masthead {
+        padding-bottom: 20px;
+        margin-bottom: 24px;
+    }
+
+    .dash-body {
+        min-height: 0;
+        grid-template-rows: minmax(0, 1fr);
+        gap: 20px;
+    }
+
+    .dash-main,
+    .dash-rail {
+        min-height: 0;
+        gap: 20px;
+    }
+
+    .focus-hero {
+        flex: 1 1 0;
+        min-height: 0;
+        overflow: hidden;
+        padding: 28px 36px;
+    }
+
+    .dash-block,
+    .rail-block {
+        padding: 20px 24px;
+    }
+
+    .note-block {
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    .quick-link {
+        padding: 9px 0;
+    }
 }
 
 /* ---------- responsive ---------- */
 
-@media (max-width: 980px) {
+@media (max-width: 900px) {
+    /* one column, so no need to stretch to the screen height anymore */
     .dash-body {
+        flex: none;
         grid-template-columns: 1fr;
+    }
+
+    .quick-links {
+        margin-top: 0;
     }
 }
 
-@media (max-width: 620px) {
+@media (max-width: 600px) {
     .dash-layout {
-        padding: 32px 20px 40px;
+        padding: 24px 16px 40px;
     }
 
     .dash-masthead {
@@ -361,13 +570,26 @@
         gap: 16px;
     }
 
-    .masthead-meta {
-        width: 100%;
-        justify-content: space-between;
+    .masthead-greeting h1 {
+        font-size: 32px;
+    }
+
+    .focus-hero {
+        min-height: 240px;
+        padding: 24px;
     }
 
     .focus-hero-number {
-        font-size: 48px;
+        font-size: 64px;
+    }
+
+    .rail-stat-number {
+        font-size: 40px;
+    }
+
+    .start-focus-block {
+        flex-direction: column;
+        align-items: flex-start;
     }
 }
 
@@ -377,60 +599,4 @@
     * {
         transition: none !important;
     }
-}
-
-/* ---------- weekly chart ---------- */
-
-.week-chart {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-end;
-    justify-content: space-between;
-    height: 90px;
-    margin-top: 18px;
-}
-
-.week-bar-col {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 8px;
-    flex: 1;
-    height: 100%;
-}
-
-.week-bar {
-    width: 10px;
-    height: var(--bar-h, 10px);
-    border-radius: 4px 4px 0 0;
-    background: var(--dash-line);
-}
-
-.week-bar.is-today {
-    background: var(--dash-accent-warm);
-}
-
-.week-bar-label {
-    font-size: 11px;
-    color: var(--dash-ink-soft);
-}
-
-/* ---------- start focus link ---------- */
-
-.start-focus-btn,
-.start-focus-btn:visited {
-    flex-shrink: 0;
-    background: transparent;
-    color: var(--dash-accent);
-    font-size: 14px;
-    font-weight: 500;
-    text-decoration: none;
-    white-space: nowrap;
-    padding: 0;
-    height: auto;
-}
-
-.add-link {
-    text-decoration: none;
 }

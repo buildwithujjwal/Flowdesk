@@ -1,18 +1,22 @@
 .timer-layout {
-    --timer-bg: #ffffff;
-    --timer-sidebar-bg: #faf9f7;
-    --timer-text: #444444;
-    --timer-text-muted: #696965;
-    --timer-border: #e5e5e5;
+    /* same black + blue base as the other pages */
+    --timer-bg: #f4f4f5;
+    --timer-sidebar-bg: #ffffff;
+    --timer-text: #18181b;
+    --timer-text-muted: #52525b;
+    --timer-border: #e4e4e7;
     --timer-input-bg: #ffffff;
-    --timer-hover: #f0efed;
-    --timer-track: #ece9e4;
+    --timer-field-bg: #f4f4f5;
+    --timer-hover: #f4f4f5;
+    --timer-track: #e4e4e7;
     --timer-btn-text: #ffffff;
 
     /* accent shifts per mode; focus is the default */
-    --timer-accent: #2e4374;
-    --timer-accent-soft: #e2e6f0;
-    --timer-accent-btn: #2e4374; /* start button bg, separate so dark mode can make it darker for white text */
+    --timer-accent: #2563eb;
+    --timer-accent-2: #60a5fa; /* second color of the ring gradient */
+    --timer-accent-soft: #eef3fe;
+    --timer-accent-btn: #2563eb; /* start button bg, separate so dark mode can make it darker for white text */
+    --timer-glow: rgba(37, 99, 235, 0.35);
 
     display: flex;
     width: 100%;
@@ -24,15 +28,19 @@
 }
 
 .timer-layout[data-mode="short"] {
-    --timer-accent: #366b61;
-    --timer-accent-soft: #e0e9e6;
-    --timer-accent-btn: #366b61;
+    --timer-accent: #0f8a73;
+    --timer-accent-2: #34c3a5;
+    --timer-accent-soft: #e3f3ef;
+    --timer-accent-btn: #0f8a73;
+    --timer-glow: rgba(15, 138, 115, 0.35);
 }
 
 .timer-layout[data-mode="long"] {
-    --timer-accent: #5b4a8a;
-    --timer-accent-soft: #e7e2f0;
-    --timer-accent-btn: #5b4a8a;
+    --timer-accent: #6d4fc2;
+    --timer-accent-2: #a78bfa;
+    --timer-accent-soft: #efeafb;
+    --timer-accent-btn: #6d4fc2;
+    --timer-glow: rgba(109, 79, 194, 0.35);
 }
 
 [data-theme="dark"] .timer-layout {
@@ -42,24 +50,31 @@
     --timer-text-muted: #9a9aa2;
     --timer-border: #2d2d35;
     --timer-input-bg: #1d1d23;
+    --timer-field-bg: #15151a;
     --timer-hover: #26262e;
-    --timer-track: #2d2d35;
+    --timer-track: #26262e;
     --timer-btn-text: #ffffff;
-    --timer-accent: #7f9ae2;
-    --timer-accent-soft: #232a3d;
-    --timer-accent-btn: #4763bb;
+    --timer-accent: #60a5fa;
+    --timer-accent-2: #93c5fd;
+    --timer-accent-soft: #1e2a3d;
+    --timer-accent-btn: #2563eb;
+    --timer-glow: rgba(96, 165, 250, 0.35);
 }
 
 [data-theme="dark"] .timer-layout[data-mode="short"] {
     --timer-accent: #5fb3a3;
+    --timer-accent-2: #8fd8c8;
     --timer-accent-soft: #1d2e2a;
     --timer-accent-btn: #2f7a6d;
+    --timer-glow: rgba(95, 179, 163, 0.35);
 }
 
 [data-theme="dark"] .timer-layout[data-mode="long"] {
     --timer-accent: #a594e0;
+    --timer-accent-2: #c9bdf5;
     --timer-accent-soft: #2a2438;
     --timer-accent-btn: #6a55a8;
+    --timer-glow: rgba(165, 148, 224, 0.35);
 }
 
 /* ---------- sidebar ---------- */
@@ -73,12 +88,15 @@
     box-sizing: border-box;
 }
 
+/* small uppercase headings, same as the tasks and notes sidebars */
 .timer-menu-label {
-    margin: 24px 0 10px;
-    padding: 0;
-    background: transparent;
+    margin: 28px 0 10px;
+    padding-left: 4px;
     color: var(--timer-text-muted);
-    font-size: 13px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
 }
 
 .timer-menu-label:first-child {
@@ -88,9 +106,7 @@
 .timer-modes {
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    padding: 0;
-    background: transparent;
+    gap: 4px;
 }
 
 .mode-btn {
@@ -100,15 +116,25 @@
     color: var(--timer-text-muted);
     background: transparent;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     box-sizing: border-box;
     font-size: 15px;
+    font-weight: 500;
     text-align: left;
     cursor: pointer;
 }
 
 .mode-btn:hover {
     background: var(--timer-hover);
+    color: var(--timer-text);
+}
+
+/* selected mode: tinted background and a line on the left, like the tasks filters */
+.mode-btn.is-active {
+    background: var(--timer-accent-soft);
+    color: var(--timer-accent);
+    font-weight: 600;
+    box-shadow: inset 3px 0 0 var(--timer-accent);
 }
 
 /* visible ring for keyboard users */
@@ -120,73 +146,100 @@
     outline-offset: 2px;
 }
 
-.mode-btn.is-active {
-    background: var(--timer-accent-soft);
-    color: var(--timer-accent);
-    font-weight: 500;
-}
-
+/* today: two small stat cards, number big on top and the label under it */
 .timer-stats {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 14px;
-    border: 1px solid var(--timer-border);
-    border-radius: 8px;
-    background: var(--timer-input-bg);
-    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
 }
 
 .stat-row {
     display: flex;
-    justify-content: space-between;
-    font-size: 14px;
-    color: var(--timer-text);
+    flex-direction: column-reverse; /* the number is the second span in the html, this puts it on top */
+    gap: 4px;
+    padding: 14px;
+    border: 1px solid var(--timer-border);
+    border-top: 3px solid var(--timer-accent);
+    border-radius: 10px;
+    background: var(--timer-input-bg);
 }
 
 .stat-row span:first-child {
+    font-size: 13px;
     color: var(--timer-text-muted);
 }
 
+.stat-row span:last-child {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--timer-text);
+}
+
+/* durations: one card with a line between each setting */
 .timer-durations {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    border: 1px solid var(--timer-border);
+    border-radius: 10px;
+    background: var(--timer-input-bg);
 }
 
 .duration-field {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 14px;
+    gap: 12px;
+    padding: 10px 14px;
+    font-size: 15px;
+    font-weight: 500;
     color: var(--timer-text);
+}
+
+.duration-field + .duration-field {
+    border-top: 1px solid var(--timer-border);
+}
+
+/* "min" / "per cycle" in small grey text after the name */
+.duration-name small {
+    margin-left: 4px;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--timer-text-muted);
 }
 
 .duration-field input {
-    width: 64px;
-    height: 34px;
+    width: 72px;
+    height: 38px;
     padding: 0 10px;
     border: 1px solid var(--timer-border);
-    border-radius: 6px;
-    background: var(--timer-input-bg);
+    border-radius: 8px;
+    background: var(--timer-field-bg);
     color: var(--timer-text);
-    font-size: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
     box-sizing: border-box;
 }
 
+.duration-field input:focus {
+    border-color: var(--timer-accent);
+    outline: none;
+}
+
+/* history: thin scrollbar and a line between days */
 .timer-history {
     list-style: none;
     margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
+    padding: 0 4px 0 0;
     max-height: 260px;
     overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--timer-border) transparent;
 }
 
 .history-item {
-    padding-bottom: 10px;
+    padding: 10px 4px;
     border-bottom: 1px solid var(--timer-border);
 }
 
@@ -196,14 +249,15 @@
 
 .history-info h3 {
     margin: 0 0 4px;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
+    font-variant-numeric: tabular-nums;
     color: var(--timer-text);
 }
 
 .history-info p {
     margin: 0;
-    font-size: 12px;
+    font-size: 13px;
     color: var(--timer-text-muted);
 }
 
@@ -211,25 +265,30 @@
 
 .timer-main {
     flex: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 50px 70px;
+    padding: 40px;
     box-sizing: border-box;
-    background: var(--timer-bg);
 }
 
+/* mode name as a small colored pill above the ring */
 .timer-mode-label {
     margin: 0 0 28px;
-    color: var(--timer-text-muted);
+    padding: 6px 16px;
+    border-radius: 999px;
+    background: var(--timer-accent-soft);
+    color: var(--timer-accent);
     font-size: 15px;
+    font-weight: 600;
 }
 
 .timer-ring-wrap {
     position: relative;
-    width: 300px;
-    height: 300px;
+    width: 380px;
+    height: 380px;
 }
 
 .timer-ring {
@@ -238,20 +297,29 @@
     transform: rotate(-90deg);
 }
 
+.ring-stop-start {
+    stop-color: var(--timer-accent);
+}
+
+.ring-stop-end {
+    stop-color: var(--timer-accent-2);
+}
+
+/* r is 100, so the ring stays 628 long (timer.js uses 628 for the progress) */
 .ring-track {
     fill: none;
     stroke: var(--timer-track);
-    stroke-width: 10;
+    stroke-width: 12;
 }
 
 .ring-progress {
     fill: none;
-    stroke: var(--timer-accent);
-    stroke-width: 10;
+    stroke: url(#ring-gradient);
+    stroke-width: 12;
     stroke-linecap: round;
     stroke-dasharray: 628;
     stroke-dashoffset: 0;
-    transition: stroke-dashoffset 1s linear, stroke 0.3s ease;
+    transition: stroke-dashoffset 1s linear;
 }
 
 .timer-face {
@@ -261,45 +329,70 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 10px;
 }
 
 .timer-time {
-    font-family: "SF Mono", "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
-    font-variant-numeric: tabular-nums;
-    font-size: 56px;
-    font-weight: 300;
+    font-variant-numeric: tabular-nums; /* numbers stay the same width so the time doesn't jump */
+    font-size: 84px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -2px;
     color: var(--timer-text);
-    letter-spacing: 1px;
 }
 
 .timer-cycle {
-    font-size: 13px;
+    font-size: 15px;
+    font-weight: 500;
     color: var(--timer-text-muted);
 }
 
+/* round dots, now inside the ring right under "Round X of Y" */
+.timer-dots {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--timer-track);
+}
+
+.dot.is-filled {
+    background: var(--timer-accent);
+}
+
+/* Reset - Start - Skip, Start is bigger in the middle */
 .timer-controls {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
     margin-top: 36px;
 }
 
 .control-btn {
-    height: 44px;
-    padding: 0 20px;
-    border-radius: 8px;
-    font-size: 14px;
+    height: 48px;
+    padding: 0 22px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
     cursor: pointer;
     box-sizing: border-box;
 }
 
 .primary-btn {
-    min-width: 120px;
+    min-width: 170px;
+    height: 58px;
     border: none;
+    border-radius: 12px;
     background: var(--timer-accent-btn);
     color: var(--timer-btn-text);
-    font-weight: 500;
+    font-size: 18px;
+    font-weight: 700;
+    box-shadow: 0 8px 20px var(--timer-glow);
 }
 
 .primary-btn:hover {
@@ -308,7 +401,7 @@
 
 .ghost-btn {
     border: 1px solid var(--timer-border);
-    background: transparent;
+    background: var(--timer-input-bg);
     color: var(--timer-text);
 }
 
@@ -316,21 +409,25 @@
     background: var(--timer-hover);
 }
 
-.timer-dots {
-    display: flex;
-    gap: 8px;
-    margin-top: 24px;
+.restart-cycle-link {
+    margin-top: 16px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--timer-text-muted);
+    font-size: 14px;
+    cursor: pointer;
 }
 
-.dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--timer-track);
+.restart-cycle-link:hover {
+    color: var(--timer-text);
+    text-decoration: underline;
 }
 
-.dot.is-filled {
-    background: var(--timer-accent);
+.timer-tip {
+    margin: 32px 0 0;
+    font-size: 15px;
+    color: var(--timer-text-muted);
 }
 
 @media (max-width: 720px) {
@@ -346,16 +443,24 @@
     }
 
     .timer-main {
-        padding: 40px 24px;
+        padding: 32px 16px;
     }
 
     .timer-ring-wrap {
-        width: 240px;
-        height: 240px;
+        width: 260px;
+        height: 260px;
     }
 
     .timer-time {
-        font-size: 44px;
+        font-size: 56px;
+    }
+
+    .timer-controls {
+        gap: 10px;
+    }
+
+    .primary-btn {
+        min-width: 130px;
     }
 }
 
@@ -403,18 +508,4 @@
 .overlay-hint {
     font-size: 16px;
     opacity: 0.8;
-}
-
-.restart-cycle-link {
-    margin-top: 14px;
-    padding: 0;
-    border: none;
-    background: transparent;
-    color: var(--timer-text-muted);
-    font-size: 13px;
-    cursor: pointer;
-}
-
-.restart-cycle-link:hover {
-    color: var(--timer-text);
 }

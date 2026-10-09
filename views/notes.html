@@ -34,9 +34,10 @@
         <div class="resizer" data-column=".sidebar" data-direction="1"></div>
 
         <main class="editor-area">
-            <div class="empty-state" id="empty-state">
-                <p>Select a note or create a new one</p>
-            </div>
+            <!-- a button, so clicking it opens a new note (same as the + button) -->
+            <button type="button" class="empty-state" id="empty-state">
+                <span>Select a note or create a new one</span>
+            </button>
             <div class="note-editor" id="note-editor" style="display:none;">
 
                 <input type="text" id="note-title" placeholder="Note Title" aria-label="Note title">

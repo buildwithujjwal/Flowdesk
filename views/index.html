@@ -30,9 +30,14 @@
 
     <div id="landing">
         <p class="landing-eyebrow">Flowdesk</p>
-        <h1 class="landing-quote">Focus is not something you find.<br>It's something you build.</h1>
+        <h1 class="landing-quote">Focus is not something you find.<br><span class="landing-highlight">It's something you build.</span></h1>
         <p class="landing-subtext">Tasks, notes, and a pomodoro timer - in one quiet place.</p>
-        <button id="get-started-btn" class="landing-cta">Get Started</button>
+        <div class="landing-features">
+            <span class="feature-chip">✅ Tasks</span>
+            <span class="feature-chip">📝 Notes</span>
+            <span class="feature-chip">⏳ Pomodoro</span>
+        </div>
+        <button id="get-started-btn" class="landing-cta">Get Started <span class="cta-arrow">&rarr;</span></button>
     </div>
 
     <div id="auth-wrapper" class="hidden">
@@ -41,20 +46,26 @@
         <div id="login">
             <form action="">
                 <h2>Login</h2>
-                <input id="login-username" type="text" placeholder="Username"> <br>
-                <input id="login-password" type="password" placeholder="Password"> <br>
-                <button id="login-button">Login</button> <br>
+                <p class="auth-subtitle">Welcome back! Log in to continue.</p>
+                <label class="auth-label" for="login-username">Username</label>
+                <input id="login-username" type="text" placeholder="Username">
+                <label class="auth-label" for="login-password">Password</label>
+                <input id="login-password" type="password" placeholder="Password">
                 <p id="login-error-msg" class="error"></p>
+                <button id="login-button">Login</button>
                 <a href="#" id="show-register">Don't have an account yet?</a>
             </form>
         </div>
         <div id="register" class="hidden">
             <form action="">
                 <h2>Register</h2>
-                <input id="register-username" type="text" placeholder="Set Username"> <br>
-                <input id="register-password" type="password" placeholder="Set Password"> <br>
-                <button id="register-button">Register</button> <br>
+                <p class="auth-subtitle">Create an account to get started.</p>
+                <label class="auth-label" for="register-username">Username</label>
+                <input id="register-username" type="text" placeholder="Set Username">
+                <label class="auth-label" for="register-password">Password</label>
+                <input id="register-password" type="password" placeholder="Set Password">
                 <p id="register-error-msg" class="error"></p>
+                <button id="register-button">Register</button>
                 <a href="#" id="show-login">Already have an account?</a>
             </form>
         </div>

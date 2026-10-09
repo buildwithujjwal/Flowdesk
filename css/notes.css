@@ -1,13 +1,21 @@
 .notes-layout {
-    --notes-bg: #ffffff;
-    --notes-sidebar-bg: #faf9f7;
-    --notes-text: #444444;
-    --notes-border: #e5e5e5;
+    /* same black + blue colors as the dashboard and tasks page */
+    --notes-bg: #f4f4f5;
+    --notes-sidebar-bg: #ffffff;
+    --notes-text: #18181b;
+    --notes-text-soft: #52525b;
+    --notes-border: #e4e4e7;
     --notes-input-bg: #ffffff;
-    --notes-hover: #f0efed;
-    --notes-button: #333333;
+    --notes-field-bg: #f4f4f5;
+    --notes-writing-bg: #fafafa;
+    --notes-hover: #f4f4f5;
+    --notes-button: #18181b;
     --notes-button-text: #ffffff;
+    --notes-accent: #2563eb;
+    --notes-accent-soft: #eef3fe;
     --notes-error: #b3412e;
+    --notes-error-soft: #fbecea;
+    --notes-shadow: rgba(0, 0, 0, 0.06);
 
     display: flex;
     width: 100%;
@@ -15,30 +23,40 @@
     flex: 1;
     min-height: 0;
     overflow-y: auto;
+    background: var(--notes-bg);
 }
 
 [data-theme="dark"] .notes-layout {
-  --notes-bg: #15151a;
-  --notes-sidebar-bg: #1d1d23;
-  --notes-text: #e4e4e7;
-  --notes-border: #2d2d35;
-  --notes-input-bg: #1d1d23;
-  --notes-hover: #26262e;
-  --notes-button: #e4e4e7;
-  --notes-button-text: #15151a;
-  --notes-error: #e2634a;
+    --notes-bg: #15151a;
+    --notes-sidebar-bg: #1d1d23;
+    --notes-text: #e4e4e7;
+    --notes-text-soft: #8a8a92;
+    --notes-border: #2d2d35;
+    --notes-input-bg: #1d1d23;
+    --notes-field-bg: #15151a;
+    --notes-writing-bg: #18181e;
+    --notes-hover: #26262e;
+    --notes-button: #e4e4e7;
+    --notes-button-text: #15151a;
+    --notes-accent: #60a5fa;
+    --notes-accent-soft: #1e2a3d;
+    --notes-error: #e2634a;
+    --notes-error-soft: #3a211d;
+    --notes-shadow: rgba(0, 0, 0, 0.3);
 }
+
+/* ---------- left sidebar ---------- */
 
 .sidebar {
     width: 240px;
     flex-shrink: 0;
-    padding: 28px 20px;
+    padding: 28px 16px;
     border-right: 1px solid var(--notes-border);
     background: var(--notes-sidebar-bg);
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 20px;
     overflow-y: auto;
 }
 
@@ -46,34 +64,71 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding-left: 4px;
 }
 
 .sidebar-header h2 {
-    font-size: 1rem;
-    font-weight: 600;
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
     color: var(--notes-text);
 }
 
+/* "+" new note button, the main button of the sidebar */
 .sidebar-header button {
-    width: 28px;
-    height: 28px;
+    width: 36px;
+    height: 36px;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     background: var(--notes-button);
     color: var(--notes-button-text);
-    font-size: 1.1rem;
+    font-size: 20px;
+    line-height: 1;
     cursor: pointer;
 }
 
-.sidebar-header button:hover { opacity: 0.85; }
+.sidebar-header button:hover {
+    background: var(--notes-accent);
+}
 
 .section-label {
-    font-size: 0.7rem;
+    margin: 0 0 8px;
+    padding-left: 12px;
+    font-size: 12px;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
+    color: var(--notes-text-soft);
+}
+
+/* "All Notes" looks like the selected filter by default (blue, same as the tasks page filters) */
+#all-notes-btn {
+    all: unset;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--notes-accent);
+    background: var(--notes-accent-soft);
+    box-shadow: inset 3px 0 0 var(--notes-accent);
+}
+
+/* but when a category is picked (it gets the "active" class from notes.js),
+   All Notes goes back to looking like a normal item */
+.sidebar:has(#category-list li.active) #all-notes-btn {
+    font-weight: 500;
+    color: var(--notes-text-soft);
+    background: transparent;
+    box-shadow: none;
+}
+
+.sidebar:has(#category-list li.active) #all-notes-btn:hover {
+    background: var(--notes-hover);
     color: var(--notes-text);
-    opacity: 0.4;
-    margin-bottom: 6px;
 }
 
 .sidebar ul {
@@ -82,42 +137,94 @@
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 4px;
 }
 
 .sidebar ul li {
-    padding: 8px 12px;
-    border-radius: 6px;
+    padding: 10px 12px;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 0.88rem;
-    color: var(--notes-text);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--notes-text-soft);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.sidebar ul li:hover,
-.sidebar ul li.active { background: var(--notes-hover); }
+/* small # in front of each category name */
+.sidebar ul li::before {
+    content: "#";
+    margin-right: 8px;
+    color: var(--notes-border);
+    font-weight: 700;
+}
+
+.sidebar ul li:hover {
+    background: var(--notes-hover);
+    color: var(--notes-text);
+}
+
+.sidebar ul li.active {
+    background: var(--notes-accent-soft);
+    color: var(--notes-accent);
+    font-weight: 600;
+    box-shadow: inset 3px 0 0 var(--notes-accent);
+}
+
+.sidebar ul li.active::before {
+    color: var(--notes-accent);
+}
+
+/* ---------- middle: editor ---------- */
 
 .editor-area {
     flex: 2;
+    min-width: 0;
     border-right: 1px solid var(--notes-border);
     background: var(--notes-bg);
     display: flex;
     flex-direction: column;
-    padding: 40px 50px;
-    gap: 14px;
+    padding: 32px 40px;
     overflow-y: auto;
     box-sizing: border-box;
 }
 
+/* shown when no note is open. notes.js sets it to display block or flex, so it works with both */
 .empty-state {
     margin: auto;
-    color: var(--notes-text);
-    opacity: 0.35;
-    font-size: 0.9rem;
+    padding: 40px 48px;
+    border: 2px dashed var(--notes-border);
+    border-radius: 14px;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: var(--notes-text-soft);
+    font-size: 17px;
+    /* it is a button now, so remove the default button background and show a hand cursor */
+    background: transparent;
+    cursor: pointer;
 }
 
+.empty-state::before {
+    content: "\270E"; /* pencil */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 14px;
+    border-radius: 50%;
+    background: var(--notes-accent-soft);
+    color: var(--notes-accent);
+    font-size: 26px;
+}
+
+.empty-state span {
+    display: block;
+}
+
+/* the editor is a white card on the grey background */
 .note-editor {
     display: flex;
     flex-direction: column;
@@ -125,132 +232,188 @@
     /* take the full height of the editor area, but never grow past it */
     flex: 1;
     min-height: 0;
+    padding: 24px;
+    border: 1px solid var(--notes-border);
+    border-radius: 14px;
+    background: var(--notes-input-bg);
+    box-shadow: 0 2px 8px var(--notes-shadow);
 }
 
 #note-title {
     width: 100%;
-    font-size: 1.3rem;
-    font-weight: 600;
-    border: none;
-    border-bottom: 1px solid var(--notes-border);
+    height: 54px;
+    padding: 0 16px;
+    border: 1px solid var(--notes-border);
+    border-radius: 10px;
     outline: none;
+    box-sizing: border-box;
+    font-size: 22px;
+    font-weight: 700;
     color: var(--notes-text);
-    background: transparent;
-    padding-bottom: 10px;
+    background: var(--notes-field-bg);
+}
+
+#note-category,
+#new-category-input {
+    align-self: flex-start;
+    height: 38px;
+    padding: 0 12px;
+    border: 1px solid var(--notes-border);
+    border-radius: 8px;
+    outline: none;
+    box-sizing: border-box;
+    font-size: 15px;
+    color: var(--notes-text);
+    background: var(--notes-field-bg);
 }
 
 #note-category {
-    border: 1px solid var(--notes-border);
-    border-radius: 6px;
-    outline: none;
-    font-size: 0.8rem;
-    color: var(--notes-text);
-    background: var(--notes-input-bg);
-    padding: 5px 10px;
+    min-width: 200px;
     cursor: pointer;
 }
 
-/* new category input was unstyled, so it stayed white in dark mode */
+/* notes.js shows this with display: block, max-width keeps it from going full width */
 #new-category-input {
-    border: 1px solid var(--notes-border);
-    border-radius: 6px;
-    outline: none;
-    font-size: 0.8rem;
-    color: var(--notes-text);
-    background: var(--notes-input-bg);
-    padding: 5px 10px;
+    width: 100%;
+    max-width: 280px;
 }
 
+/* the writing area, a light tinted box so it is clear where to type */
 #note-content {
     flex: 1;
+    padding: 16px 18px;
+    border: 1px solid var(--notes-border);
+    border-radius: 10px;
     outline: none;
-    font-size: 0.95rem;
+    background: var(--notes-writing-bg);
+    font-size: 17px;
     line-height: 1.75;
     color: var(--notes-text);
     /* long notes scroll inside here, so the buttons below stay fixed at the bottom */
-    min-height: 0;
+    min-height: 120px;
     overflow-y: auto;
     overflow-wrap: anywhere; /* long words and links wrap instead of going off the side */
 }
 
 #note-content:empty::before {
     content: attr(placeholder);
-    color: var(--notes-text);
-    opacity: 0.3;
+    color: var(--notes-text-soft);
+    opacity: 0.6;
+}
+
+/* blue ring around the field you are typing in */
+#note-title:focus,
+#note-category:focus,
+#new-category-input:focus,
+#note-content:focus,
+#search-input:focus {
+    border-color: var(--notes-accent);
+    box-shadow: 0 0 0 3px var(--notes-accent-soft);
 }
 
 /* error text had no color, so it was hard to see in dark mode */
 #error {
     color: var(--notes-error);
-    font-size: 0.8rem;
+    font-size: 14px;
     margin: 0;
 }
 
 .editor-actions {
     display: flex;
-    gap: 8px;
-    padding-top: 10px;
-    border-top: 1px solid var(--notes-border);
+    align-items: center;
+    gap: 10px;
     flex-shrink: 0; /* buttons never get squeezed by the note content */
 }
 
 .editor-actions button {
-    padding: 8px 18px;
-    border: 1px solid var(--notes-border);
-    border-radius: 6px;
-    font-size: 0.85rem;
+    height: 42px;
+    padding: 0 20px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
     cursor: pointer;
-    background: transparent;
-    color: var(--notes-text);
 }
 
-.editor-actions button:hover { background: var(--notes-hover); }
-
+/* Save: the main action, solid black, blue on hover */
 #save-note-btn {
+    border: none;
     background: var(--notes-button);
     color: var(--notes-button-text);
-    border-color: var(--notes-button);
 }
 
 #save-note-btn:hover {
-    opacity: 0.85;
-    background: var(--notes-button);
+    background: var(--notes-accent);
 }
 
+/* Delete: red outline, fills light red on hover */
+#delete-note-btn {
+    border: 1px solid var(--notes-error);
+    background: transparent;
+    color: var(--notes-error);
+}
+
+#delete-note-btn:hover {
+    background: var(--notes-error-soft);
+}
+
+/* Close: small icon button pushed to the right end */
+#close-editor-btn {
+    width: 42px;
+    margin-left: auto;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--notes-text-soft);
+    font-size: 18px;
+}
+
+#close-editor-btn:hover {
+    background: var(--notes-hover);
+    color: var(--notes-text);
+}
+
+/* ---------- right: note cards ---------- */
+
 .cards-area {
-    width: 280px;
+    width: 320px;
     flex-shrink: 0;
     background: var(--notes-sidebar-bg);
     padding: 28px 20px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
     box-sizing: border-box;
 }
 
+/* title on top, search box full width under it */
 .cards-header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .cards-header h3 {
-    font-size: 0.95rem;
-    font-weight: 600;
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
     color: var(--notes-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 #search-input {
-    height: 34px;
-    padding: 0 12px;
+    width: 100%;
+    height: 40px;
+    padding: 0 14px;
     border: 1px solid var(--notes-border);
-    border-radius: 7px;
-    font-size: 0.85rem;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 15px;
     outline: none;
-    background: var(--notes-input-bg);
+    background: var(--notes-field-bg);
     color: var(--notes-text);
-    width: 120px;
 }
 
 .cards-grid {
@@ -260,108 +423,81 @@
 }
 
 .note-card {
-    background: var(--notes-input-bg);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px 16px;
     border: 1px solid var(--notes-border);
-    border-radius: 8px;
-    padding: 14px;
+    border-radius: 10px;
+    background: var(--notes-input-bg);
     cursor: pointer;
 }
 
-.note-card:hover { background: var(--notes-hover); }
+.note-card:hover {
+    border-color: var(--notes-text-soft);
+    box-shadow: 0 2px 8px var(--notes-shadow);
+}
 
 .note-card h4 {
-    font-size: 0.88rem;
+    margin: 0;
+    font-size: 16px;
     font-weight: 600;
     color: var(--notes-text);
-    margin: 0 0 4px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
+/* always 2 lines tall (even for short or empty notes), so every card is the same height */
 .note-card .note-preview {
-    font-size: 0.78rem;
-    color: var(--notes-text);
-    opacity: 0.5;
     margin: 0;
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--notes-text-soft);
     /* show only the first 2 lines of the note, rest is cut with ... */
     display: -webkit-box;
     -webkit-line-clamp: 2;
     line-clamp: 2;
     -webkit-box-orient: vertical;
-    line-height: 1.4;
-    max-height: 2.8em; /* 2 lines x 1.4, backup in case line-clamp doesn't apply */
+    height: 2.9em; /* 2 lines x 1.45 */
     overflow: hidden;
     overflow-wrap: anywhere; /* long links break instead of going outside the card */
 }
 
+/* category as a blue tag */
 .note-category-tag {
-    display: inline-block;
-    margin-top: 4px;
-    padding: 3px 9px;
-    font-size: 0.65rem;
-    font-weight: 500;
-    color: var(--notes-text);
-    background: transparent;
-    border: 1px solid var(--notes-border);
-    border-radius: 20px;
+    align-self: flex-start;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--notes-accent-soft);
+    color: var(--notes-accent);
+    font-size: 12px;
+    font-weight: 600;
 }
 
-#all-notes-btn {
-    all: unset;
-    cursor: pointer;
-    display: block;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 8px 12px;
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--notes-text);
-    background: var(--notes-hover);
-    border-radius: 6px;
-    transition: background 0.15s ease;
-}
-
-#all-notes-btn:hover {
-    background: var(--notes-border);
-}
-
-#close-editor-btn {
-    background: transparent;
-    border: 1px solid var(--notes-border);
-    color: var(--notes-text);
-}
-
+/* the open note: blue line on the left */
 .note-card.active {
-    background: var(--notes-hover);
-    border-left: 3px solid var(--notes-button);
+    border-color: var(--notes-accent);
+    box-shadow: inset 3px 0 0 var(--notes-accent);
 }
-
-.note-card.active h4,
-.note-card.active .note-preview {
-    color: var(--notes-text);
-    opacity: 1;
-}
-
-.note-card.active .note-category-tag {
-    border-color: var(--notes-border);
-    color: var(--notes-text);
-}
-
 
 /* shown in the cards area when no note matches */
 .no-notes {
-    font-size: 0.85rem;
-    color: var(--notes-text);
-    opacity: 0.5;
     margin: 0;
+    padding: 28px 16px;
+    border: 2px dashed var(--notes-border);
+    border-radius: 10px;
+    text-align: center;
+    font-size: 15px;
+    color: var(--notes-text-soft);
 }
 
-/* ring around a category or card when it is reached with the Tab key */
+/* ring around a button, category or card when it is reached with the Tab key */
+#all-notes-btn:focus-visible,
 .sidebar ul li:focus-visible,
-.note-card:focus-visible {
-    outline: 2px solid var(--notes-button);
+.note-card:focus-visible,
+.notes-layout button:focus-visible {
+    outline: 2px solid var(--notes-accent);
     outline-offset: 2px;
 }
 
@@ -373,8 +509,8 @@
 
     .sidebar,
     .cards-area {
-        width: 100%;
-        padding: 16px 20px;
+        width: 100% !important; /* beats the width set by dragging the resizer */
+        padding: 16px;
         gap: 12px;
     }
 
@@ -386,10 +522,14 @@
     /* fixed height so the editor doesn't get squeezed, long notes scroll inside it */
     .editor-area {
         flex: none;
-        height: 70vh;
-        padding: 20px;
+        height: 75vh;
+        padding: 16px;
         border-right: none;
         border-bottom: 1px solid var(--notes-border);
+    }
+
+    .note-editor {
+        padding: 16px;
     }
 }
 

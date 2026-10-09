@@ -6,11 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flowdesk</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏳</text></svg>"> <!-- small icon in the tab, also stops the favicon.ico 404 error -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&display=swap"
-        rel="stylesheet">
     <link rel="stylesheet" href="../css/nav.css">
     <link rel="stylesheet" href="../css/dashboard.css">
     <script src="../js/auth-gaurd.js"></script>
@@ -53,11 +48,13 @@
             <div class="dash-main">
 
                 <section class="focus-hero">
+                    <p class="focus-hero-eyebrow">Today's focus</p>
                     <div class="focus-hero-stat">
                         <span class="focus-hero-number" id="stat-minutes"></span>
                         <span class="focus-hero-label">focused today</span>
                     </div>
                     <p class="focus-hero-sub"><span id="stat-sessions">0</span></p>
+                    <p class="focus-hero-note">Every finished focus session on the timer adds to this number.</p>
                 </section>
 
                 <section class="dash-block start-focus-block">
@@ -93,17 +90,19 @@
             <aside class="dash-rail">
 
                 <section class="rail-block rail-stats">
-                    <div class="rail-stat-row">
+                    <div class="rail-stat-row stat-tasks-row">
+                        <span class="rail-stat-label"><span class="stat-symbol">&#10003;</span> Active tasks</span>
                         <span class="rail-stat-number" id="stat-tasks"></span>
-                        <span class="rail-stat-label">Active tasks</span>
+                        <span class="rail-stat-hint">due today or later</span>
                     </div>
-                    <div class="rail-stat-row">
+                    <div class="rail-stat-row stat-notes-row">
+                        <span class="rail-stat-label"><span class="stat-symbol">&#9998;</span> Total notes</span>
                         <span class="rail-stat-number" id="stat-notes"></span>
-                        <span class="rail-stat-label">Total notes</span>
+                        <span class="rail-stat-hint">saved in your notebook</span>
                     </div>
                 </section>
 
-                <section class="rail-block">
+                <section class="rail-block note-block">
                     <div class="block-head">
                         <h2 class="block-title">Recent note</h2>
                         <a href="notes.html" class="block-link">View all</a>
@@ -115,6 +114,26 @@
                     </div>
                     <p class="note-preview-empty" id="recent-note-empty" hidden>No notes yet. Your first one will show
                         up here.</p>
+                </section>
+
+                <section class="quick-links">
+                    <h2 class="block-title">Jump to</h2>
+                    <a href="tasks.html" class="quick-link">
+                        <span class="quick-link-name">Tasks</span>
+                        <span class="quick-link-desc">Plan what's next</span>
+                    </a>
+                    <a href="notes.html" class="quick-link">
+                        <span class="quick-link-name">Notes</span>
+                        <span class="quick-link-desc">Write things down</span>
+                    </a>
+                    <a href="timer.html" class="quick-link">
+                        <span class="quick-link-name">Pomodoro Timer</span>
+                        <span class="quick-link-desc">25 / 5 minutes by default</span>
+                    </a>
+                    <a href="settings.html" class="quick-link">
+                        <span class="quick-link-name">Settings</span>
+                        <span class="quick-link-desc">Account and data</span>
+                    </a>
                 </section>
 
             </aside>

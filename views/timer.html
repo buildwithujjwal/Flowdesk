@@ -39,19 +39,19 @@
             <p class="timer-menu-label">Durations</p>
             <div class="timer-durations">
                 <label class="duration-field">
-                    Focus
+                    <span class="duration-name">Focus <small>min</small></span>
                     <input type="number" id="focusDuration" min="1" max="90" value="25">
                 </label>
                 <label class="duration-field">
-                    Short break
+                    <span class="duration-name">Short break <small>min</small></span>
                     <input type="number" id="shortDuration" min="1" max="30" value="5">
                 </label>
                 <label class="duration-field">
-                    Long break
+                    <span class="duration-name">Long break <small>min</small></span>
                     <input type="number" id="longDuration" min="1" max="60" value="15">
                 </label>
                 <label class="duration-field">
-                    Rounds
+                    <span class="duration-name">Rounds <small>per cycle</small></span>
                     <input type="number" id="roundsPerCycle" min="1" max="12" value="4">
                 </label>
             </div>
@@ -67,12 +67,25 @@
 
             <div class="timer-ring-wrap">
                 <svg class="timer-ring" viewBox="0 0 220 220">
+                    <!-- color fade along the ring, the two colors are set in timer.css -->
+                    <defs>
+                        <linearGradient id="ring-gradient" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0%" class="ring-stop-start"></stop>
+                            <stop offset="100%" class="ring-stop-end"></stop>
+                        </linearGradient>
+                    </defs>
                     <circle class="ring-track" cx="110" cy="110" r="100"></circle>
                     <circle class="ring-progress" id="ring-progress" cx="110" cy="110" r="100"></circle>
                 </svg>
                 <div class="timer-face">
                     <span class="timer-time" id="timer-display">25:00</span>
                     <span class="timer-cycle" id="cycle-label">Round 1 of 4</span>
+                    <div class="timer-dots" id="cycle-dots">
+                        <span class="dot is-filled"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
                 </div>
             </div>
 
@@ -83,12 +96,7 @@
             </div>
             <button class="restart-cycle-link" id="restart-cycle-btn">Restart cycle</button>
 
-            <div class="timer-dots" id="cycle-dots">
-                <span class="dot is-filled"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
-            </div>
+            <p class="timer-tip">Pick one task and stay with it until the ring runs out.</p>
         </main>
     </div>
     <!-- alertdialog role so screen readers announce the overlay when it shows -->

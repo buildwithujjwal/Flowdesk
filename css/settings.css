@@ -1,20 +1,24 @@
 .settings-layout {
-    --settings-bg: #ffffff;
-    --settings-sidebar-bg: #faf9f7;
-    --settings-text: #444444;
-    --settings-text-muted: #696965;
-    --settings-border: #e5e5e5;
+    /* same black + blue colors as the other pages */
+    --settings-bg: #f4f4f5;
+    --settings-sidebar-bg: #ffffff;
+    --settings-text: #18181b;
+    --settings-text-muted: #52525b;
+    --settings-border: #e4e4e7;
     --settings-input-bg: #ffffff;
-    --settings-hover: #f0efed;
-    --settings-accent: #2e4374;
-    --settings-accent-soft: #e2e6f0;
+    --settings-field-bg: #f4f4f5;
+    --settings-hover: #f4f4f5;
+    --settings-accent: #2563eb;
+    --settings-accent-soft: #eef3fe;
     --settings-danger: #b3412e;
-    --settings-danger-soft: #f5e4e0;
+    --settings-danger-soft: #fbecea;
     --settings-success: #15803d;
-    /* button backgrounds are separate so dark mode can darken them for white text */
-    --settings-accent-btn: #2e4374;
-    --settings-danger-btn: #b3412e;
+    --settings-shadow: rgba(0, 0, 0, 0.06);
+    /* button colors are separate so dark mode can change them */
+    --settings-accent-btn: #18181b;
     --settings-btn-text: #ffffff;
+    --settings-danger-btn: #b3412e;
+    --settings-danger-btn-text: #ffffff;
 
     display: flex;
     width: 100%;
@@ -32,33 +36,46 @@
     --settings-text-muted: #9a9aa2;
     --settings-border: #2d2d35;
     --settings-input-bg: #1d1d23;
+    --settings-field-bg: #15151a;
     --settings-hover: #26262e;
-    --settings-accent: #7f9ae2;
-    --settings-accent-soft: #232a3d;
+    --settings-accent: #60a5fa;
+    --settings-accent-soft: #1e2a3d;
     --settings-danger: #e2634a;
-    --settings-danger-soft: #3a2420;
+    --settings-danger-soft: #3a211d;
     --settings-success: #4ade80;
-    --settings-accent-btn: #4763bb;
+    --settings-shadow: rgba(0, 0, 0, 0.3);
+    --settings-accent-btn: #e4e4e7;
+    --settings-btn-text: #15151a;
     --settings-danger-btn: #bf452e;
-    --settings-btn-text: #ffffff;
+    --settings-danger-btn-text: #ffffff;
 }
 
 /* ---------- sidebar ---------- */
 
 .settings-menu {
-    width: 300px;
-    min-width: 300px;
+    width: 280px;
+    min-width: 280px;
     padding: 28px 20px;
     border-right: 1px solid var(--settings-border);
     background: var(--settings-sidebar-bg);
     box-sizing: border-box;
 }
 
+/* small uppercase heading, same as the tasks and notes sidebars */
+.settings-menu-label {
+    margin: 0 0 10px;
+    padding-left: 14px;
+    color: var(--settings-text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
 .settings-tabs {
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    background: transparent;
+    gap: 4px;
 }
 
 .tab-btn {
@@ -68,15 +85,25 @@
     color: var(--settings-text-muted);
     background: transparent;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     box-sizing: border-box;
     font-size: 15px;
+    font-weight: 500;
     text-align: left;
     cursor: pointer;
 }
 
 .tab-btn:hover {
     background: var(--settings-hover);
+    color: var(--settings-text);
+}
+
+/* selected tab: blue background and a blue line on the left, like the tasks filters */
+.tab-btn.is-active {
+    background: var(--settings-accent-soft);
+    color: var(--settings-accent);
+    font-weight: 600;
+    box-shadow: inset 3px 0 0 var(--settings-accent);
 }
 
 /* visible ring for keyboard users on every button */
@@ -87,41 +114,59 @@
     outline-offset: 2px;
 }
 
-.tab-btn.is-active {
-    background: var(--settings-accent-soft);
-    color: var(--settings-accent);
-    font-weight: 500;
-}
-
 /* ---------- main ---------- */
 
 .settings-main {
     flex: 1;
-    padding: 50px 70px;
+    min-width: 0;
+    padding: 48px 56px;
     box-sizing: border-box;
-    background: var(--settings-bg);
 }
 
+/* one centered column, wide enough for the form but not stretched across the screen */
 .settings-panel {
     display: none;
-    max-width: 560px;
+    max-width: 640px;
+    margin: 0 auto;
 }
 
 .settings-panel.is-active {
     display: block;
 }
 
+.panel-header {
+    margin-bottom: 28px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--settings-border);
+}
+
 .panel-title {
-    margin: 0 0 6px;
+    margin: 0 0 8px;
     color: var(--settings-text);
-    font-size: 22px;
-    font-weight: 600;
+    font-size: 34px;
+    font-weight: 700;
 }
 
 .panel-desc {
-    margin: 0 0 28px;
+    margin: 0;
     color: var(--settings-text-muted);
-    font-size: 14px;
+    font-size: 16px;
+}
+
+/* white card around the form */
+.settings-card {
+    padding: 28px;
+    border: 1px solid var(--settings-border);
+    border-radius: 12px;
+    background: var(--settings-input-bg);
+    box-shadow: 0 2px 8px var(--settings-shadow);
+}
+
+.card-title {
+    margin: 0 0 20px;
+    color: var(--settings-text);
+    font-size: 19px;
+    font-weight: 600;
 }
 
 /* ---------- account form ---------- */
@@ -129,38 +174,44 @@
 .settings-form {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 18px;
 }
 
 .field {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    font-size: 14px;
+    gap: 8px;
+}
+
+.field-label {
+    font-size: 15px;
+    font-weight: 600;
     color: var(--settings-text);
 }
 
 .field input {
-    height: 42px;
-    padding: 0 14px;
+    height: 48px;
+    padding: 0 16px;
     border: 1px solid var(--settings-border);
-    border-radius: 7px;
-    background: var(--settings-input-bg);
+    border-radius: 10px;
+    background: var(--settings-field-bg);
     color: var(--settings-text);
     box-sizing: border-box;
-    font-size: 15px;
+    font-size: 16px;
+    outline: none;
 }
 
+/* blue ring around the field you are typing in */
 .field input:focus {
-    outline: 2px solid var(--settings-accent);
-    outline-offset: 1px;
+    border-color: var(--settings-accent);
+    box-shadow: 0 0 0 3px var(--settings-accent-soft);
 }
 
 .field-error {
     margin: 0;
-    min-height: 16px;
+    min-height: 18px;
     color: var(--settings-danger);
-    font-size: 13px;
+    font-size: 14px;
 }
 
 /* JS adds this class after a successful password change */
@@ -168,63 +219,77 @@
     color: var(--settings-success);
 }
 
+/* main button, black and turns blue on hover (same as Add Task / Save) */
 .save-btn {
     align-self: flex-start;
-    height: 42px;
-    padding: 0 22px;
+    height: 46px;
+    padding: 0 24px;
     border: none;
-    border-radius: 7px;
+    border-radius: 8px;
     background: var(--settings-accent-btn);
     color: var(--settings-btn-text);
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 15px;
+    font-weight: 600;
     cursor: pointer;
 }
 
 .save-btn:hover {
-    opacity: 0.9;
+    background: var(--settings-accent);
 }
 
-/* ---------- data ---------- */
+/* ---------- data reset ---------- */
 
-.toggle-text {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+.danger-label {
+    margin: 0 0 10px;
+    color: var(--settings-danger);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
 }
 
-.toggle-label {
-    color: var(--settings-text);
-    font-size: 15px;
-}
-
-.toggle-sub {
-    color: var(--settings-text-muted);
-    font-size: 13px;
-}
-
+/* red border all around and a thick red line on the left, so it looks serious */
 .danger-zone {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 20px;
-    padding: 18px;
-    border: 1px solid var(--settings-danger-soft);
-    border-radius: 8px;
+    gap: 24px;
+    padding: 24px;
+    border: 1px solid var(--settings-danger);
+    border-left: 5px solid var(--settings-danger);
+    border-radius: 12px;
     background: var(--settings-danger-soft);
 }
 
+.toggle-text {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.toggle-label {
+    color: var(--settings-text);
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.toggle-sub {
+    color: var(--settings-text-muted);
+    font-size: 15px;
+    line-height: 1.5;
+}
+
 .danger-btn {
-    height: 40px;
-    padding: 0 18px;
-    border: none;
-    border-radius: 7px;
-    background: var(--settings-danger-btn);
-    color: var(--settings-btn-text);
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
     flex-shrink: 0;
+    height: 46px;
+    padding: 0 22px;
+    border: none;
+    border-radius: 8px;
+    background: var(--settings-danger-btn);
+    color: var(--settings-danger-btn-text);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
 }
 
 .danger-btn:hover {
@@ -241,7 +306,11 @@
         min-width: 0;
         border-right: none;
         border-bottom: 1px solid var(--settings-border);
-        padding: 12px 24px;
+        padding: 12px 16px;
+    }
+
+    .settings-menu-label {
+        display: none;
     }
 
     /* tabs sit side by side on small screens to save height */
@@ -254,7 +323,15 @@
     }
 
     .settings-main {
-        padding: 40px 24px;
+        padding: 28px 16px;
+    }
+
+    .panel-title {
+        font-size: 28px;
+    }
+
+    .settings-card {
+        padding: 20px;
     }
 
     .danger-zone {

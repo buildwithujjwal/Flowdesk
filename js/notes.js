@@ -73,6 +73,11 @@ newNote.addEventListener("click", () => {
     newCategoryInput.value = "";  
 });
 
+// clicking the "Select a note or create a new one" box does the same as the + button
+document.getElementById("empty-state").addEventListener("click", () => {
+    newNote.click();
+});
+
 // -------------------------Note Category----------------------------
 const noteCategorySelect = document.getElementById("note-category"); 
 const newCategoryInput = document.getElementById("new-category-input"); // new manual category input

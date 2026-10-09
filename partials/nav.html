@@ -1,4 +1,5 @@
 <nav>
+    <a href="dashboard.html" class="nav-brand">Flowdesk</a>
     <ul>
         <li><a href="dashboard.html">Dashboard</a></li>
         <li><a href="tasks.html">Tasks</a></li>
@@ -6,6 +7,9 @@
         <li><a href="timer.html">Pomodoro Timer</a></li>
         <li><a href="settings.html">Settings</a></li>
     </ul>
-    <button type="button" id="dark-toggle-mode">🌙</button>
-    <button type="button" id="logout-btn">Logout</button>
+    <!-- theme toggle and logout together on the right -->
+    <div class="nav-actions">
+        <button type="button" id="dark-toggle-mode" aria-label="Toggle dark mode">🌙</button>
+        <button type="button" id="logout-btn">Logout</button>
+    </div>
 </nav>

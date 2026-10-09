@@ -20,6 +20,7 @@
             <input type="text" id="task-search" placeholder="Search tasks">
             <button id="new-task-btn">New Task</button>
             
+            <p class="menu-label">Filters</p>
             <nav class="tasks-filters">
                 <button data-filter="all">All</button>
                 <button data-filter="active">Active</button>
@@ -30,6 +31,11 @@
         </aside>
 
         <main class="tasks-main">
+            <header class="tasks-header">
+                <h1 class="tasks-title">Tasks</h1>
+                <p class="tasks-subtitle">Add a task with a due date, then tick it off when it's done.</p>
+            </header>
+
             <form id="task-form">
                 <input type="text" id="task-input" placeholder="Add a new task" required>
                 <input type="date" id="dueDate">

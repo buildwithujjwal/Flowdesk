@@ -3,6 +3,16 @@ fetch('../partials/nav.html')
     .then(html => {
         document.getElementById("nav-placeholder").innerHTML = html;
 
+        // highlight the link of the page we are on (only the page links, not the logo)
+        let currentPage = window.location.pathname.split("/").pop(); // e.g. "tasks.html"
+        let navLinks = document.querySelectorAll("#nav-placeholder nav ul a");
+        for (let i = 0; i < navLinks.length; i++) {
+            if (navLinks[i].getAttribute("href") === currentPage) {
+                navLinks[i].classList.add("is-active");
+                navLinks[i].setAttribute("aria-current", "page"); // screen readers say "current page"
+            }
+        }
+
         // logout logic
         let logoutBtn = document.getElementById("logout-btn");
         logoutBtn.addEventListener("click", (event) => {
