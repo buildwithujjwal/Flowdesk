@@ -6,6 +6,10 @@ Flowdesk is a frontend-only web app I built with plain HTML, CSS and JavaScript 
 
 I wanted one tab I could keep open while studying: a place to plan what's next, write things down, and actually sit with one task for 25 minutes. That's Flowdesk.
 
+**Live demo:** [flowdesk-ujjwal.vercel.app](https://flowdesk-ujjwal.vercel.app/)
+
+![Flowdesk dashboard in dark mode: today's focus time, active tasks and notes, recent note and quick links](docs/dashboard.png)
+
 ---
 
 ## Contents
@@ -14,6 +18,7 @@ I wanted one tab I could keep open while studying: a place to plan what's next, 
 - [Tech used](#tech-used)
 - [Getting started](#getting-started)
 - [How it works](#how-it-works)
+- [Deployment](#deployment)
 - [Project proposal](#project-proposal)
 - [Known limitations](#known-limitations)
 - [What I'd add next](#what-id-add-next)
@@ -28,6 +33,8 @@ I wanted one tab I could keep open while studying: a place to plan what's next, 
 - Register and log in with a username and password
 - Passwords are **hashed with the Web Crypto API** (PBKDF2 + SHA-256 with a random salt per user), so the real password is never saved
 - If you're already logged in, you go straight to the dashboard
+
+![Flowdesk landing page with the tagline "Focus is not something you find. It's something you build." and a Get Started button](docs/landing.png)
 
 ### Dashboard
 - Greeting based on the time of day, today's date and a live clock
@@ -62,6 +69,8 @@ I wanted one tab I could keep open while studying: a place to plan what's next, 
 - When a session ends: a sound, a browser notification and a full-screen overlay, **on whichever page you're on**
 - Daily history of sessions and focus minutes
 
+![Pomodoro timer during a short break: green progress ring, Reset / Start / Skip controls, and the durations panel in the sidebar](docs/timer.png)
+
 ### Settings
 - Change your password
 - **Clear all data** for your account (with a confirmation, since it can't be undone)
@@ -89,6 +98,12 @@ CSS uses custom properties (variables) for every colour, so light and dark mode 
 ---
 
 ## Getting started
+
+### Try it online
+
+The easiest way is the live version: **[flowdesk-ujjwal.vercel.app](https://flowdesk-ujjwal.vercel.app/)**. Register an account and start using it. Nothing to install.
+
+To run it on your own computer instead, follow the steps below.
 
 ### Prerequisites
 
@@ -158,8 +173,12 @@ Flowdesk/
 │   ├── timer.js
 │   ├── timer-worker.js # the countdown that runs in a Web Worker
 │   └── settings.js
-└── partials/
-    └── nav.html        # navbar shared by every page
+├── partials/
+│   └── nav.html        # navbar shared by every page
+├── docs/               # screenshots used in this README
+├── vercel.json         # sends the site root to the login page on Vercel
+├── LICENSE
+└── README.md
 ```
 
 *(Yes, `auth-gaurd.js` is spelled that way on purpose. Every page already points to it.)*
@@ -184,6 +203,30 @@ Everything is stored in the browser. Tasks and notes from all users on the same 
 - **Passwords are never stored.** Register and login use PBKDF2 from the Web Crypto API. Older accounts made before hashing still work, and their plain password is swapped for a hash on their next login.
 - **No HTML injection.** Task titles, note titles and category names are escaped before being added to the page, so typing `<script>` just shows the text.
 - **Two tabs don't overwrite each other.** Tasks and notes listen for the `storage` event and reload when another tab changes them.
+
+---
+
+## Deployment
+
+The live site is hosted on **[Vercel](https://vercel.com/)** and redeploys automatically on every push to `main`.
+
+Because it's a static site, there's nothing to build. The Vercel project uses:
+
+| Setting | Value |
+|---|---|
+| Framework preset | Other |
+| Root directory | `./` |
+| Build / install command | none |
+
+The login page lives at `views/index.html`, not at the root, so `vercel.json` redirects `/` there. It's a redirect rather than a rewrite on purpose: the pages use relative links like `dashboard.html` and `../css/...`, which only work when the address bar is inside `/views/`.
+
+```json
+{
+  "redirects": [
+    { "source": "/", "destination": "/views/index.html", "permanent": false }
+  ]
+}
+```
 
 ---
 
@@ -261,7 +304,6 @@ dashboard.html ◄──► tasks.html ◄──► notes.html ◄──► time
 
 ## What I'd add next
 
-- Deploy it with GitHub Pages so it can be tried without cloning
 - Show missed and due-today tasks with their own colour
 - Note counts next to each category
 - A weekly focus chart and a daily focus goal on the dashboard
